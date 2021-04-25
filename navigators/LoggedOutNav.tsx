@@ -13,7 +13,11 @@ const LoggedOutNav = () => {
       initialRouteName={routes.welcome}
       screenOptions={{ headerBackTitle: 'Back', headerTintColor: 'black' }}
     >
-      <Screen name={routes.welcome} component={Welcome} />
+      <Screen
+        name={routes.welcome}
+        options={{ headerShown: false }}
+        component={Welcome}
+      />
       <Screen name={routes.logIn} component={LogIn} />
       <Screen name={routes.createAccount} component={CreateAccount} />
     </Navigator>
