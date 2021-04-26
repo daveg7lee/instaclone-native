@@ -12,8 +12,8 @@ const LoggedOutNav = () => {
     <Navigator
       initialRouteName={routes.welcome}
       screenOptions={{
-        headerTransparent: true,
         headerTitle: '',
+        headerTransparent: true,
         headerTintColor: 'white',
       }}
     >
