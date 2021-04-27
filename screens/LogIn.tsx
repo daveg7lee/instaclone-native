@@ -1,5 +1,7 @@
+import { gql, useMutation } from '@apollo/client';
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { isLoggedInVar } from '../apollo';
 import AuthButton from '../components/auth/AuthButton';
 import AuthLayout from '../components/auth/AuthLayout';
 import { TextInput } from '../components/auth/AuthShared';
@@ -9,11 +11,31 @@ type LogInForm = {
   password: string;
 };
 
+const LOGIN_MUTATION = gql`
+  mutation logIn($username: String!, $password: String!) {
+    logIn(username: $username, password: $password) {
+      success
+      token
+      error
+    }
+  }
+`;
+
 const LogIn = () => {
   const passwordRef = useRef<any>();
-  const { register, handleSubmit, setValue } = useForm<LogInForm>();
-  const onValid = (data) => {
-    console.log(data);
+  const { register, handleSubmit, setValue, watch } = useForm<LogInForm>();
+  const onCompleted = ({ logIn: { success, token } }) => {
+    if (success) {
+      isLoggedInVar(true);
+    }
+  };
+  const [logInMutation, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted: onCompleted,
+  });
+  const onValid = (data: LogInForm) => {
+    if (!loading) {
+      logInMutation({ variables: { ...data } });
+    }
   };
   useEffect(() => {
     register('username', { required: 'Username is required' });
@@ -42,9 +64,9 @@ const LogIn = () => {
       />
       <AuthButton
         text="Log In"
+        loading={loading}
         onPress={handleSubmit(onValid)}
-        disabled={false}
-        loading={false}
+        disabled={!watch('username') || !watch('password')}
       />
     </AuthLayout>
   );
