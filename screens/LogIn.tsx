@@ -28,6 +28,7 @@ const LogIn = () => {
         autoCapitalize="none"
         onSubmitEditing={() => passwordRef?.current?.focus()}
         onChangeText={(text: string) => setValue('username', text)}
+        placeholderTextColor="gray"
       />
       <TextInput
         ref={passwordRef}
@@ -37,11 +38,13 @@ const LogIn = () => {
         lastOne
         onSubmitEditing={handleSubmit(onValid)}
         onChangeText={(text: string) => setValue('password', text)}
+        placeholderTextColor="gray"
       />
       <AuthButton
         text="Log In"
         onPress={handleSubmit(onValid)}
         disabled={false}
+        loading={false}
       />
     </AuthLayout>
   );

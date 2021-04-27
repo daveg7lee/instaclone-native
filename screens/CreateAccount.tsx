@@ -40,6 +40,7 @@ const CreateAccount = () => {
         returnKeyType="next"
         onSubmitEditing={() => onNext(lastNameRef)}
         onChangeText={(text) => setValue('firstName', text)}
+        placeholderTextColor="gray"
       />
       <TextInput
         ref={lastNameRef}
@@ -47,6 +48,7 @@ const CreateAccount = () => {
         returnKeyType="next"
         onSubmitEditing={() => onNext(userNameRef)}
         onChangeText={(text) => setValue('lastName', text)}
+        placeholderTextColor="gray"
       />
       <TextInput
         ref={userNameRef}
@@ -55,6 +57,7 @@ const CreateAccount = () => {
         autoCapitalize="none"
         onSubmitEditing={() => onNext(emailRef)}
         onChangeText={(text) => setValue('username', text)}
+        placeholderTextColor="gray"
       />
       <TextInput
         ref={emailRef}
@@ -63,6 +66,7 @@ const CreateAccount = () => {
         returnKeyType="next"
         onSubmitEditing={() => onNext(passwordRef)}
         onChangeText={(text) => setValue('email', text)}
+        placeholderTextColor="gray"
       />
       <TextInput
         ref={passwordRef}
@@ -72,11 +76,13 @@ const CreateAccount = () => {
         lastOne
         onSubmitEditing={handleSubmit(onValid)}
         onChangeText={(text) => setValue('password', text)}
+        placeholderTextColor="gray"
       />
       <AuthButton
         text="Create Account"
         disabled={false}
         onPress={handleSubmit(onValid)}
+        loading
       />
     </AuthLayout>
   );
