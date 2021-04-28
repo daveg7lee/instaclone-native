@@ -7,18 +7,27 @@ import LoggedOutNav from './navigators/LoggedOutNav';
 import LoggedInNav from './navigators/LoggedInNav';
 import { NavigationContainer } from '@react-navigation/native';
 import { ApolloProvider, useReactiveVar } from '@apollo/client';
-import client, { isLoggedInVar } from './apollo';
+import client, { isLoggedInVar, tokenVar } from './apollo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const onFinish = () => setLoading(false);
-  const preload = async () => {
+  const preloadAssets = async () => {
     const fontsToLoad = [Ionicons.font];
     const fontPromise = fontsToLoad.map((font) => Font.loadAsync(font));
     const imagesToLoad = [require('./assets/logo.png')];
     const imagePromise = imagesToLoad.map((image) => Asset.loadAsync(image));
     await Promise.all([fontPromise, imagePromise]);
+  };
+  const preload = async () => {
+    const tokenExists = await AsyncStorage.getItem('TOKEN');
+    if (tokenExists) {
+      isLoggedInVar(Boolean(tokenExists));
+      tokenVar(tokenExists);
+    }
+    return preloadAssets();
   };
   if (loading) {
     return (
