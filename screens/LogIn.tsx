@@ -21,9 +21,14 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const LogIn = () => {
+const LogIn = ({ route: { params } }) => {
   const passwordRef = useRef<any>();
-  const { register, handleSubmit, setValue, watch } = useForm<LogInForm>();
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: {
+      password: params?.password,
+      username: params?.username,
+    },
+  });
   const onCompleted = ({ logIn: { success, token } }) => {
     if (success) {
       isLoggedInVar(true);
@@ -44,6 +49,7 @@ const LogIn = () => {
   return (
     <AuthLayout>
       <TextInput
+        value={watch('username')}
         autoFocus
         placeholder="Username"
         returnKeyType="next"
@@ -53,6 +59,7 @@ const LogIn = () => {
         placeholderTextColor="gray"
       />
       <TextInput
+        value={watch('password')}
         ref={passwordRef}
         placeholder="Password"
         secureTextEntry
