@@ -29,9 +29,11 @@ const LogIn = ({ route: { params } }) => {
       username: params?.username,
     },
   });
-  const onCompleted = async ({ logIn: { success, token } }) => {
+  const onCompleted = async ({ logIn: { success, token, error } }) => {
     if (success) {
       await logUserIn(token);
+    } else {
+      alert(error);
     }
   };
   const [logInMutation, { loading }] = useMutation(LOGIN_MUTATION, {
