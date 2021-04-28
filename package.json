@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.15",
+    "@react-native-async-storage/async-storage": "^1.13.0",
     "@react-navigation/bottom-tabs": "^5.11.10",
     "@react-navigation/native": "^6.0.0-next.2",
     "@react-navigation/stack": "^6.0.0-next.9",
