@@ -1,11 +1,12 @@
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import routes from '../routes';
 import Feed from '../screens/Feed';
 import Search from '../screens/Search';
 import Notifications from '../screens/Notifications';
 import Profile from '../screens/Profile';
+import { View } from 'react-native';
+import TabIcon from '../components/nav/TabIcon';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -27,7 +28,7 @@ const LoggedOutNav = () => {
         component={Feed}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="home" color={color} size={focused ? 24 : 20} />
+            <TabIcon name="home" color={color} focused={focused} />
           ),
         }}
       />
@@ -36,7 +37,16 @@ const LoggedOutNav = () => {
         component={Search}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="search" color={color} size={focused ? 24 : 20} />
+            <TabIcon name="search" color={color} focused={focused} />
+          ),
+        }}
+      />
+      <Screen
+        name={'camera'}
+        component={View}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <TabIcon name="add-circle" color={color} focused={focused} />
           ),
         }}
       />
@@ -45,7 +55,7 @@ const LoggedOutNav = () => {
         component={Notifications}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="heart" color={color} size={focused ? 24 : 20} />
+            <TabIcon name="heart" color={color} focused={focused} />
           ),
         }}
       />
@@ -54,7 +64,7 @@ const LoggedOutNav = () => {
         component={Profile}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="person" color={color} size={focused ? 22 : 18} />
+            <TabIcon name="person" color={color} focused={focused} />
           ),
         }}
       />
