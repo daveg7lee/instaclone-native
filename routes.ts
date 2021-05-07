@@ -6,4 +6,6 @@ export default {
   search: 'search',
   notification: 'notification',
   profile: 'profile',
+  me: 'me',
+  photo: 'photo',
 };

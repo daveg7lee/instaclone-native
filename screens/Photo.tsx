@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import routes from '../routes';
 import { RouteProps } from '../types';
 
-export default function Search({ navigation }: RouteProps) {
+export default function Photo({ navigation }: RouteProps) {
   return (
     <View
       style={{
@@ -14,8 +14,8 @@ export default function Search({ navigation }: RouteProps) {
         justifyContent: 'center',
       }}
     >
-      <TouchableOpacity onPress={() => navigation.navigate(routes.photo)}>
-        <Text style={{ color: 'white' }}>Photo</Text>
+      <TouchableOpacity onPress={() => navigation.navigate(routes.profile)}>
+        <Text style={{ color: 'white' }}>Profile</Text>
       </TouchableOpacity>
     </View>
   );

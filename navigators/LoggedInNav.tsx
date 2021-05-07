@@ -1,12 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import routes from '../routes';
-import Feed from '../screens/Feed';
-import Search from '../screens/Search';
-import Notifications from '../screens/Notifications';
-import Profile from '../screens/Profile';
 import { View } from 'react-native';
 import TabIcon from '../components/nav/TabIcon';
+import StackNavFactory from '../components/nav/StackNavFactory';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -25,22 +22,24 @@ const LoggedOutNav = () => {
     >
       <Screen
         name={routes.feed}
-        component={Feed}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <TabIcon name="home" color={color} focused={focused} />
           ),
         }}
-      />
+      >
+        {() => <StackNavFactory screenName={routes.feed} />}
+      </Screen>
       <Screen
         name={routes.search}
-        component={Search}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <TabIcon name="search" color={color} focused={focused} />
           ),
         }}
-      />
+      >
+        {() => <StackNavFactory screenName={routes.search} />}
+      </Screen>
       <Screen
         name={'camera'}
         component={View}
@@ -52,22 +51,24 @@ const LoggedOutNav = () => {
       />
       <Screen
         name={routes.notification}
-        component={Notifications}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <TabIcon name="heart" color={color} focused={focused} />
           ),
         }}
-      />
+      >
+        {() => <StackNavFactory screenName={routes.notification} />}
+      </Screen>
       <Screen
-        name={routes.profile}
-        component={Profile}
+        name={routes.me}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <TabIcon name="person" color={color} focused={focused} />
           ),
         }}
-      />
+      >
+        {() => <StackNavFactory screenName={routes.me} />}
+      </Screen>
     </Navigator>
   );
 };
