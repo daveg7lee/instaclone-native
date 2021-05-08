@@ -3,8 +3,8 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from '../fragments';
 import ScreenLayout from '../components/ScreenLayout';
-import { FlatList } from 'react-native-gesture-handler';
 import Photo from '../components/Photo';
+import { FlatList } from 'react-native';
 
 const FEED_QUERY = gql`
   query seeFeed {

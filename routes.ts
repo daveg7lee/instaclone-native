@@ -8,4 +8,6 @@ export default {
   profile: 'profile',
   me: 'me',
   photo: 'photo',
+  likes: 'likes',
+  comments: 'comments',
 };

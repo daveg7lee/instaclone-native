@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/core';
 import React, { useEffect, useState } from 'react';
-import { Image, useWindowDimensions } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Image, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native';
 import routes from '../routes';
 import { PhotoType } from '../types';
@@ -28,19 +28,34 @@ const Username = styled.Text`
 
 const File = styled.Image``;
 
-const Actions = styled.View``;
+const ExtraContainer = styled.View`
+  padding: 10px;
+`;
 
-const Action = styled.TouchableOpacity``;
+const Actions = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Action = styled.TouchableOpacity`
+  margin-right: 8px;
+`;
 
 const Likes = styled.Text`
   color: white;
+  margin: 7px 0px;
+  font-weight: 600;
+`;
+
+const Caption = styled.View`
+  flex-direction: row;
+  align-items: center;
 `;
 
 const CaptionText = styled.Text`
+  margin-left: 5px;
   color: white;
 `;
-
-const Caption = styled.View``;
 
 function Photo({ id, user, caption, file, isLiked, likes }: PhotoType) {
   const navigation = useNavigation();
@@ -68,17 +83,29 @@ function Photo({ id, user, caption, file, isLiked, likes }: PhotoType) {
         }}
         source={{ uri: file }}
       />
-      <Actions>
-        <Action></Action>
-        <Action></Action>
-      </Actions>
-      <Likes>{likes === 1 ? '1 like' : `${likes} likes`}</Likes>
-      <Caption>
-        <TouchableOpacity onPress={goToProfile}>
-          <Username>{user.username}</Username>
+      <ExtraContainer>
+        <Actions>
+          <Action>
+            <Ionicons
+              name={isLiked ? 'heart' : 'heart-outline'}
+              color={isLiked ? 'tomato' : 'white'}
+              size={22}
+            />
+          </Action>
+          <Action onPress={() => navigation.navigate(routes.comments)}>
+            <Ionicons name="chatbubble-outline" color="white" size={22} />
+          </Action>
+        </Actions>
+        <TouchableOpacity onPress={() => navigation.navigate(routes.likes)}>
+          <Likes>{likes === 1 ? '1 like' : `${likes} likes`}</Likes>
         </TouchableOpacity>
-        <CaptionText>{caption}</CaptionText>
-      </Caption>
+        <Caption>
+          <TouchableOpacity onPress={goToProfile}>
+            <Username>{user.username}</Username>
+          </TouchableOpacity>
+          <CaptionText>{caption}</CaptionText>
+        </Caption>
+      </ExtraContainer>
     </Container>
   );
 }

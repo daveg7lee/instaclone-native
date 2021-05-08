@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import styled from 'styled-components/native';
 
 interface ScreenLayoutProps {
-  loading: boolean;
+  loading?: boolean;
   children: any;
 }
 
