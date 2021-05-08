@@ -7,8 +7,8 @@ import Photo from '../components/Photo';
 import { FlatList } from 'react-native';
 
 const FEED_QUERY = gql`
-  query seeFeed {
-    seeFeed {
+  query seeFeed($offset: Int!) {
+    seeFeed(offset: $offset) {
       ...PhotoFragment
       user {
         username
@@ -27,7 +27,11 @@ const FEED_QUERY = gql`
 `;
 
 function Feed() {
-  const { data, loading, refetch } = useQuery(FEED_QUERY);
+  const { data, loading, refetch, fetchMore } = useQuery(FEED_QUERY, {
+    variables: {
+      offset: 0,
+    },
+  });
   const renderPhoto = ({ item: photo }) => {
     return <Photo {...photo} />;
   };
@@ -37,6 +41,12 @@ function Feed() {
         style={{
           width: '100%',
         }}
+        onEndReachedThreshold={0.05}
+        onEndReached={() =>
+          fetchMore({
+            variables: { offset: data?.seeFeed?.length },
+          })
+        }
         refreshing={false}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
