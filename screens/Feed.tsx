@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from '../fragments';
 import ScreenLayout from '../components/ScreenLayout';
@@ -27,7 +27,7 @@ const FEED_QUERY = gql`
 `;
 
 function Feed() {
-  const { data, loading } = useQuery(FEED_QUERY);
+  const { data, loading, refetch } = useQuery(FEED_QUERY);
   const renderPhoto = ({ item: photo }) => {
     return <Photo {...photo} />;
   };
@@ -37,6 +37,8 @@ function Feed() {
         style={{
           width: '100%',
         }}
+        refreshing={false}
+        onRefresh={refetch}
         showsVerticalScrollIndicator={false}
         data={data?.seeFeed}
         keyExtractor={(photo) => '' + photo.id}
