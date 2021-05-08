@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Image } from 'react-native';
 import Photo from '../../screens/Photo';
 import Profile from '../../screens/Profile';
 import Feed from '../../screens/Feed';
@@ -23,16 +24,31 @@ export default function StackNavFactory({ screenName }) {
       }}
     >
       {screenName === routes.feed ? (
-        <Screen name={screenName} component={Feed} />
+        <Screen
+          name={'Stack' + screenName}
+          component={Feed}
+          options={{
+            headerTitle: () => (
+              <Image
+                style={{
+                  width: 130,
+                  height: 50,
+                }}
+                resizeMode="contain"
+                source={require('../../assets/logo.png')}
+              />
+            ),
+          }}
+        />
       ) : null}
       {screenName === routes.search ? (
-        <Screen name={screenName} component={Search} />
+        <Screen name={'Stack' + screenName} component={Search} />
       ) : null}
       {screenName === routes.notification ? (
-        <Screen name={screenName} component={Notifications} />
+        <Screen name={'Stack' + screenName} component={Notifications} />
       ) : null}
       {screenName === routes.me ? (
-        <Screen name={screenName} component={Me} />
+        <Screen name={'Stack' + screenName} component={Me} />
       ) : null}
       <Screen name={routes.profile} component={Profile} />
       <Screen name={routes.photo} component={Photo} />
