@@ -31,8 +31,8 @@ export default function StackNavFactory({ screenName }) {
             headerTitle: () => (
               <Image
                 style={{
-                  width: 130,
-                  height: 50,
+                  width: 135,
+                  height: 55,
                 }}
                 resizeMode="contain"
                 source={require('../../assets/logo.png')}

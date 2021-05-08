@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { Text, View } from 'react-native';
 import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from '../fragments';
 import ScreenLayout from '../components/ScreenLayout';
 import { FlatList } from 'react-native-gesture-handler';
+import Photo from '../components/Photo';
 
 const FEED_QUERY = gql`
   query seeFeed {
@@ -28,16 +28,16 @@ const FEED_QUERY = gql`
 
 function Feed() {
   const { data, loading } = useQuery(FEED_QUERY);
-  const renderPhoto = ({ item }) => {
-    return (
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: 'white' }}>{item.caption}</Text>
-      </View>
-    );
+  const renderPhoto = ({ item: photo }) => {
+    return <Photo {...photo} />;
   };
   return (
     <ScreenLayout loading={loading}>
       <FlatList
+        style={{
+          width: '100%',
+        }}
+        showsVerticalScrollIndicator={false}
         data={data?.seeFeed}
         keyExtractor={(photo) => '' + photo.id}
         renderItem={renderPhoto}
