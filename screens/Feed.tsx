@@ -1,9 +1,10 @@
 import gql from 'graphql-tag';
 import React from 'react';
-import { View, Text } from 'react-native';
-import { RouteProps } from '../types';
-import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from '../fragments';
 import { useQuery } from '@apollo/client';
+import { Text, View } from 'react-native';
+import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from '../fragments';
+import ScreenLayout from '../components/ScreenLayout';
+import { FlatList } from 'react-native-gesture-handler';
 
 const FEED_QUERY = gql`
   query seeFeed {
@@ -25,20 +26,23 @@ const FEED_QUERY = gql`
   ${COMMENT_FRAGMENT}
 `;
 
-function Feed({ navigation }: RouteProps) {
-  const { data } = useQuery(FEED_QUERY);
-  console.log(data);
+function Feed() {
+  const { data, loading } = useQuery(FEED_QUERY);
+  const renderPhoto = ({ item }) => {
+    return (
+      <View style={{ flex: 1 }}>
+        <Text style={{ color: 'white' }}>{item.caption}</Text>
+      </View>
+    );
+  };
   return (
-    <View
-      style={{
-        backgroundColor: 'black',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Text style={{ color: 'white' }}>Feed</Text>
-    </View>
+    <ScreenLayout loading={loading}>
+      <FlatList
+        data={data?.seeFeed}
+        keyExtractor={(photo) => '' + photo.id}
+        renderItem={renderPhoto}
+      />
+    </ScreenLayout>
   );
 }
 export default Feed;
