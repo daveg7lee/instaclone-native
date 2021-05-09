@@ -5,6 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native';
 import routes from '../routes';
 import { PhotoType } from '../types';
+import { gql, useMutation } from '@apollo/client';
+
+const TOGGLE_LIKE_MUTATION = gql`
+  mutation toggleLike($id: Int!) {
+    toggleLike(id: $id) {
+      success
+      error
+    }
+  }
+`;
 
 const Container = styled.View``;
 
@@ -69,6 +79,36 @@ function Photo({ id, user, caption, file, isLiked, likes }: PhotoType) {
   const goToProfile = () => {
     navigation.navigate(routes.profile);
   };
+  const updateToggleLike = (cache, result) => {
+    const {
+      data: {
+        toggleLike: { success },
+      },
+    } = result;
+    if (success) {
+      const photoId = `Photo:${id}`;
+      cache.modify({
+        id: photoId,
+        fields: {
+          isLiked(prev) {
+            return !prev;
+          },
+          likes(prev) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
+    }
+  };
+  const [toggleLikeMutation] = useMutation(TOGGLE_LIKE_MUTATION, {
+    variables: {
+      id,
+    },
+    update: updateToggleLike,
+  });
   return (
     <Container>
       <Header onPress={goToProfile}>
@@ -84,7 +124,7 @@ function Photo({ id, user, caption, file, isLiked, likes }: PhotoType) {
       />
       <ExtraContainer>
         <Actions>
-          <Action>
+          <Action onPress={toggleLikeMutation}>
             <Ionicons
               name={isLiked ? 'heart' : 'heart-outline'}
               color={isLiked ? 'tomato' : 'white'}
@@ -95,7 +135,9 @@ function Photo({ id, user, caption, file, isLiked, likes }: PhotoType) {
             <Ionicons name="chatbubble-outline" color="white" size={22} />
           </Action>
         </Actions>
-        <TouchableOpacity onPress={() => navigation.navigate(routes.likes)}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate(routes.likes, { id })}
+        >
           <Likes>{likes === 1 ? '1 like' : `${likes} likes`}</Likes>
         </TouchableOpacity>
         <Caption>

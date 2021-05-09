@@ -7,7 +7,8 @@ import LoggedOutNav from './navigators/LoggedOutNav';
 import LoggedInNav from './navigators/LoggedInNav';
 import { NavigationContainer } from '@react-navigation/native';
 import { ApolloProvider, useReactiveVar } from '@apollo/client';
-import client, { isLoggedInVar, tokenVar } from './apollo';
+import client, { isLoggedInVar, tokenVar, cache } from './apollo';
+import { AsyncStorageWrapper, persistCache } from 'apollo3-cache-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
@@ -27,6 +28,10 @@ export default function App() {
       isLoggedInVar(Boolean(tokenExists));
       tokenVar(tokenExists);
     }
+    await persistCache({
+      cache,
+      storage: new AsyncStorageWrapper(AsyncStorage),
+    });
     return preloadAssets();
   };
   if (loading) {
