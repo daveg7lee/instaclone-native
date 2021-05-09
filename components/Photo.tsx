@@ -72,12 +72,15 @@ function Photo({ id, user, caption, file, isLiked, likes }: PhotoType) {
   const { width, height } = useWindowDimensions();
   const [imageHeight, setImageHeight] = useState(height - 450);
   useEffect(() => {
-    Image.getSize(file, (width, height) => {
+    Image.getSize(file, (_, height) => {
       setImageHeight(height / 3);
     });
   }, [file]);
   const goToProfile = () => {
-    navigation.navigate(routes.profile);
+    navigation.navigate(routes.profile, {
+      username: user.username,
+      id: user.id,
+    });
   };
   const updateToggleLike = (cache, result) => {
     const {

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/client';
-import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from '../fragments';
+import { COMMENT_FRAGMENT, PHOTO_FRAGMENT, USER_FRAGMENT } from '../fragments';
 import ScreenLayout from '../components/ScreenLayout';
 import Photo from '../components/Photo';
 import { FlatList } from 'react-native';
@@ -11,8 +11,7 @@ const FEED_QUERY = gql`
     seeFeed(offset: $offset) {
       ...PhotoFragment
       user {
-        username
-        avatar
+        ...UserFragment
       }
       caption
       comments {
@@ -22,6 +21,7 @@ const FEED_QUERY = gql`
       isMine
     }
   }
+  ${USER_FRAGMENT}
   ${PHOTO_FRAGMENT}
   ${COMMENT_FRAGMENT}
 `;
@@ -41,7 +41,6 @@ function Feed() {
         style={{
           width: '100%',
         }}
-        onEndReachedThreshold={0.01}
         onEndReached={() =>
           fetchMore({
             variables: { offset: data?.seeFeed?.length },

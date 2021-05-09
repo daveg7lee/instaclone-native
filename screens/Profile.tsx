@@ -1,17 +1,13 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
+import ScreenLayout from '../components/ScreenLayout';
 
-export default function Profile() {
+export default function Profile({ route: { params } }) {
   return (
-    <View
-      style={{
-        backgroundColor: 'black',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Text style={{ color: 'white' }}>Someones' Profile</Text>
-    </View>
+    <ScreenLayout>
+      <Text style={{ color: 'white' }}>
+        Hello it's {params?.username}'s Profile!
+      </Text>
+    </ScreenLayout>
   );
 }

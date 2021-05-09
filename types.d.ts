@@ -6,6 +6,7 @@ export type RouteProps = {
 };
 
 export type UserType = {
+  id: number;
   avatar?: string;
   username: string;
 };
