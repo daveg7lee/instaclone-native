@@ -41,6 +41,7 @@ function Feed() {
         style={{
           width: '100%',
         }}
+        onEndReachedThreshold={0.2}
         onEndReached={() =>
           fetchMore({
             variables: { offset: data?.seeFeed?.length },

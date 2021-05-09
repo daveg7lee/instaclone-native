@@ -1,17 +1,23 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text } from 'react-native';
+import ScreenLayout from '../components/ScreenLayout';
+import useMe from '../hooks/useMe';
+import { RouteProps, UserType } from '../types';
 
-export default function Me() {
+interface DataType {
+  me: UserType;
+}
+
+export default function Me({ navigation }: RouteProps) {
+  const { me }: DataType = useMe();
+  useEffect(() => {
+    navigation.setOptions({
+      title: me?.username,
+    });
+  }, [me?.username]);
   return (
-    <View
-      style={{
-        backgroundColor: 'black',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Text style={{ color: 'white' }}>Me</Text>
-    </View>
+    <ScreenLayout>
+      <Text style={{ color: 'white' }}>{me?.username}</Text>
+    </ScreenLayout>
   );
 }

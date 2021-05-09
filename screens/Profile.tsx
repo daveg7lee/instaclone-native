@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text } from 'react-native';
 import ScreenLayout from '../components/ScreenLayout';
 
-export default function Profile({ route: { params } }) {
+export default function Profile({ route: { params }, navigation }) {
+  useEffect(() => {
+    navigation.setOptions({
+      title: params?.username,
+    });
+  }, [params?.username]);
   return (
     <ScreenLayout>
       <Text style={{ color: 'white' }}>
