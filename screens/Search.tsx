@@ -13,6 +13,7 @@ import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import DismissKeyboard from '../components/DismissKeyboard';
 import ScreenLayout from '../components/ScreenLayout';
+import routes from '../routes';
 import { RouteProps } from '../types';
 
 const Input = styled.TextInput`
@@ -55,7 +56,6 @@ export default function Search({ navigation }: RouteProps) {
       },
     });
   };
-  console.log(data);
   const SearchBox = () => (
     <Input
       width={width}
@@ -74,7 +74,9 @@ export default function Search({ navigation }: RouteProps) {
     register('keyword', { required: true, minLength: 3 });
   }, []);
   const renderItem = ({ item: photo }) => (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => navigation.navigate(routes.photo, { id: photo.id })}
+    >
       <Image
         source={{ uri: photo.file }}
         style={{ width: width / numColumns, height: 100 }}

@@ -1,18 +1,17 @@
 import React from 'react';
 import { Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
-import styled from 'styled-components/native';
-
-const Container = styled.TouchableWithoutFeedback`
-  flex: 1;
-`;
 
 export default function DismissKeyboard({ children }) {
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
   return (
-    <Container onPress={dismissKeyboard} disabled={Platform.OS === 'web'}>
+    <TouchableWithoutFeedback
+      onPress={dismissKeyboard}
+      disabled={Platform.OS === 'web'}
+      style={{ flex: 1 }}
+    >
       {children}
-    </Container>
+    </TouchableWithoutFeedback>
   );
 }

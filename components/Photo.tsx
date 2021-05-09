@@ -67,7 +67,7 @@ const CaptionText = styled.Text`
   color: white;
 `;
 
-function Photo({ id, user, caption, file, isLiked, likes }: PhotoType) {
+function Photo({ id, user, caption, file, isLiked, likes }) {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const [imageHeight, setImageHeight] = useState(height - 450);

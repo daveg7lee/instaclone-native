@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import DismissKeyboard from '../DismissKeyboard';
 
@@ -25,9 +20,6 @@ const Logo = styled.Image`
 `;
 
 export default function AuthLayout({ children }) {
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
   return (
     <DismissKeyboard>
       <Container behavior="padding">
