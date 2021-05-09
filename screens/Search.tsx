@@ -1,3 +1,4 @@
+import { gql, useLazyQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Text, TextInput } from 'react-native';
@@ -12,8 +13,18 @@ const Input = styled.TextInput`
   }
 `;
 
+const SEARCH_PHOTOS = gql`
+  query searchPhotos($keyword: String!) {
+    searchPhotos(keyword: $keyword) {
+      id
+      file
+    }
+  }
+`;
+
 export default function Search({ navigation }: RouteProps) {
-  const { setValue, register, watch } = useForm();
+  const { setValue, register } = useForm();
+  const [startQueryFn, { loading, data }] = useLazyQuery(SEARCH_PHOTOS);
   const SearchBox = () => (
     <TextInput
       placeholder="Search photos"
@@ -28,7 +39,7 @@ export default function Search({ navigation }: RouteProps) {
     navigation.setOptions({ headerTitle: SearchBox });
     register('keyword');
   }, []);
-  console.log(watch());
+
   return (
     <ScreenLayout>
       <Text>Search</Text>

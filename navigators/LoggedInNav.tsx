@@ -1,13 +1,27 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import routes from '../routes';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import TabIcon from '../components/nav/TabIcon';
 import StackNavFactory from './SharedStackNav';
+import useMe from '../hooks/useMe';
+import { UserType } from '../types';
+import styled from 'styled-components/native';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
+interface DataType {
+  me: UserType;
+}
+
+const Profile = styled.Image`
+  height: 22px;
+  width: 22px;
+  border-radius: 999px;
+`;
+
 const LoggedOutNav = () => {
+  const data: DataType = useMe();
   return (
     <Navigator
       initialRouteName={routes.feed}
@@ -62,9 +76,17 @@ const LoggedOutNav = () => {
       <Screen
         name={routes.me}
         options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon name="person" color={color} focused={focused} />
-          ),
+          tabBarIcon: ({ focused, color, size }) =>
+            data?.me?.avatar ? (
+              <Profile
+                source={{ uri: data.me.avatar }}
+                style={{
+                  ...(focused && { borderColor: 'white', borderWidth: 1 }),
+                }}
+              />
+            ) : (
+              <TabIcon name={'person'} color={color} focused={focused} />
+            ),
         }}
       >
         {() => <StackNavFactory screenName={routes.me} />}
