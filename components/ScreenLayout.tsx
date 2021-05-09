@@ -17,7 +17,7 @@ const Container = styled.View`
 
 function ScreenLayout({ loading, children }: ScreenLayoutProps) {
   return (
-    <Container behavior="padding">
+    <Container>
       {loading ? <ActivityIndicator color="white" /> : children}
     </Container>
   );

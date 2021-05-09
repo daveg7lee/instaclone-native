@@ -22,7 +22,7 @@ const Logo = styled.Image`
 export default function AuthLayout({ children }) {
   return (
     <DismissKeyboard>
-      <Container behavior="padding">
+      <Container>
         <KeyboardAvoidingView
           style={{
             width: '100%',

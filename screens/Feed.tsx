@@ -17,6 +17,7 @@ const FEED_QUERY = gql`
       comments {
         ...CommentFragment
       }
+      commentNumbers
       createdAt
       isMine
     }

@@ -4,7 +4,6 @@ import { Image, useWindowDimensions, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native';
 import routes from '../routes';
-import { PhotoType } from '../types';
 import { gql, useMutation } from '@apollo/client';
 
 const TOGGLE_LIKE_MUTATION = gql`
@@ -67,7 +66,7 @@ const CaptionText = styled.Text`
   color: white;
 `;
 
-function Photo({ id, user, caption, file, isLiked, likes }) {
+function Photo({ id, user, caption, file, isLiked, likes, commentNumbers }) {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const [imageHeight, setImageHeight] = useState(height - 450);
@@ -134,7 +133,7 @@ function Photo({ id, user, caption, file, isLiked, likes }) {
               size={22}
             />
           </Action>
-          <Action onPress={() => navigation.navigate(routes.comments)}>
+          <Action onPress={() => navigation.navigate(routes.comments, { id })}>
             <Ionicons name="chatbubble-outline" color="white" size={22} />
           </Action>
         </Actions>
