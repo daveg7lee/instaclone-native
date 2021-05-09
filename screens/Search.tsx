@@ -1,18 +1,26 @@
 import { gql, useLazyQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, Text, TextInput, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import DismissKeyboard from '../components/DismissKeyboard';
 import ScreenLayout from '../components/ScreenLayout';
 import { RouteProps } from '../types';
 
 const Input = styled.TextInput`
-  background-color: white;
-  ::placeholder {
-    color: black;
-  }
+  background-color: rgba(255, 255, 255, 1);
+  color: black;
+  width: ${(props) => props.width / 1.5}px;
+  padding: 5px 10px;
+  border-radius: 7px;
 `;
 
 const MessageContainer = styled.View`
@@ -36,6 +44,8 @@ const SEARCH_PHOTOS = gql`
 `;
 
 export default function Search({ navigation }: RouteProps) {
+  const numColumns = 4;
+  const { width } = useWindowDimensions();
   const { setValue, register, handleSubmit } = useForm();
   const [startQueryFn, { loading, data, called }] = useLazyQuery(SEARCH_PHOTOS);
   const onValid = ({ keyword }) => {
@@ -48,6 +58,8 @@ export default function Search({ navigation }: RouteProps) {
   console.log(data);
   const SearchBox = () => (
     <Input
+      width={width}
+      placeholderTextColor="rgba(0, 0, 0, 0.8)"
       placeholder="Search photos"
       autoCapitalize="none"
       returnKeyLabel="Search"
@@ -61,10 +73,13 @@ export default function Search({ navigation }: RouteProps) {
     navigation.setOptions({ headerTitle: SearchBox });
     register('keyword', { required: true, minLength: 3 });
   }, []);
-  const renderPhoto = ({ item: photo }) => (
-    <View>
-      <Text style={{ color: 'white' }}>{photo.id}</Text>
-    </View>
+  const renderItem = ({ item: photo }) => (
+    <TouchableOpacity>
+      <Image
+        source={{ uri: photo.file }}
+        style={{ width: width / numColumns, height: 100 }}
+      />
+    </TouchableOpacity>
   );
   return (
     <DismissKeyboard>
@@ -74,19 +89,7 @@ export default function Search({ navigation }: RouteProps) {
             <ActivityIndicator size="large" />
             <MessageText>Searching...</MessageText>
           </MessageContainer>
-        ) : (
-          <FlatList
-            style={{
-              width: '100%',
-            }}
-            onEndReachedThreshold={0.2}
-            refreshing={false}
-            showsVerticalScrollIndicator={false}
-            data={data?.searchPhotos}
-            keyExtractor={(photo) => '' + photo.id}
-            renderItem={renderPhoto}
-          />
-        )}
+        ) : null}
         {!called ? (
           <MessageContainer>
             <MessageText>Search by keyword</MessageText>
@@ -97,7 +100,14 @@ export default function Search({ navigation }: RouteProps) {
           <MessageContainer>
             <MessageText>Could not find anything.</MessageText>
           </MessageContainer>
-        ) : null}
+        ) : (
+          <FlatList
+            numColumns={numColumns}
+            data={data?.searchPhotos}
+            keyExtractor={(photo) => '' + photo.id}
+            renderItem={renderItem}
+          />
+        )}
       </ScreenLayout>
     </DismissKeyboard>
   );

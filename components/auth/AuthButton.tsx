@@ -7,7 +7,7 @@ interface AuthButtonProps {
   onPress: Function;
   disabled: boolean;
   text: string;
-  loading: boolean;
+  loading?: boolean;
 }
 
 const Button = styled.TouchableOpacity`
