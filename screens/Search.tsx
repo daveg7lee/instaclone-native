@@ -1,22 +1,37 @@
-import React from 'react';
-import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import routes from '../routes';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { Text, TextInput } from 'react-native';
+import styled from 'styled-components/native';
+import ScreenLayout from '../components/ScreenLayout';
 import { RouteProps } from '../types';
 
+const Input = styled.TextInput`
+  background-color: white;
+  ::placeholder {
+    color: black;
+  }
+`;
+
 export default function Search({ navigation }: RouteProps) {
+  const { setValue, register, watch } = useForm();
+  const SearchBox = () => (
+    <TextInput
+      placeholder="Search photos"
+      autoCapitalize="none"
+      returnKeyLabel="Search"
+      returnKeyType="search"
+      autoCorrect={false}
+      onChangeText={(value) => setValue('keyword', value)}
+    />
+  );
+  useEffect(() => {
+    navigation.setOptions({ headerTitle: SearchBox });
+    register('keyword');
+  }, []);
+  console.log(watch());
   return (
-    <View
-      style={{
-        backgroundColor: 'black',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <TouchableOpacity onPress={() => navigation.navigate(routes.photo)}>
-        <Text style={{ color: 'white' }}>Photo</Text>
-      </TouchableOpacity>
-    </View>
+    <ScreenLayout>
+      <Text>Search</Text>
+    </ScreenLayout>
   );
 }

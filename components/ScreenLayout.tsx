@@ -1,6 +1,7 @@
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Keyboard, View } from 'react-native';
 import styled from 'styled-components/native';
+import DismissKeyboard from './DismissKeyboard';
 
 interface ScreenLayoutProps {
   loading?: boolean;
@@ -16,9 +17,11 @@ const Container = styled.View`
 
 function ScreenLayout({ loading, children }: ScreenLayoutProps) {
   return (
-    <Container>
-      {loading ? <ActivityIndicator color="white" /> : children}
-    </Container>
+    <DismissKeyboard>
+      <Container>
+        {loading ? <ActivityIndicator color="white" /> : children}
+      </Container>
+    </DismissKeyboard>
   );
 }
 
