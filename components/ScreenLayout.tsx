@@ -17,11 +17,9 @@ const Container = styled.View`
 
 function ScreenLayout({ loading, children }: ScreenLayoutProps) {
   return (
-    <DismissKeyboard>
-      <Container>
-        {loading ? <ActivityIndicator color="white" /> : children}
-      </Container>
-    </DismissKeyboard>
+    <Container>
+      {loading ? <ActivityIndicator color="white" /> : children}
+    </Container>
   );
 }
 
