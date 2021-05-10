@@ -8,7 +8,6 @@ import Notifications from '../screens/Notifications';
 import Me from '../screens/Me';
 import routes from '../routes';
 import Likes from '../screens/Likes';
-import Comments from '../screens/Comments';
 import PhotoScreen from '../screens/PhotoScreen';
 
 const { Navigator, Screen } = createStackNavigator();

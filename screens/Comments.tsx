@@ -100,7 +100,10 @@ function Comments({
           onEndReachedThreshold={0.2}
           onEndReached={() =>
             fetchMore({
-              variables: { offset: data?.seePhotoComments?.length },
+              variables: {
+                id: photoId,
+                offset: data?.seePhotoComments?.length,
+              },
             })
           }
           refreshing={false}

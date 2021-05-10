@@ -7,7 +7,6 @@ import SharedStackNav from './SharedStackNav';
 import useMe from '../hooks/useMe';
 import { UserType } from '../types';
 import styled from 'styled-components/native';
-import { useNavigation } from '@react-navigation/core';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -26,10 +25,11 @@ const TabsNav = () => {
   return (
     <Navigator
       initialRouteName={routes.feed}
-      tabBarOptions={{
-        activeTintColor: 'white',
-        showLabel: false,
-        style: {
+      screenOptions={{
+        tabBarActiveTintColor: 'white',
+        tabBarShowLabel: false,
+        headerShown: false,
+        tabBarStyle: {
           borderTopColor: 'rgba(255, 255, 255, 0.3)',
           backgroundColor: 'black',
         },

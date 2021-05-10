@@ -3,16 +3,31 @@ import { createStackNavigator } from '@react-navigation/stack';
 import TabsNav from './TabsNav';
 import routes from '../routes';
 import Comments from '../screens/Comments';
-import Upload from '../screens/Upload';
+import UploadNav from './UploadNav';
 
-const { Navigator, Screen } = createStackNavigator();
+const { Group, Navigator, Screen } = createStackNavigator();
 
 const LoggedInNav = () => {
   return (
-    <Navigator screenOptions={{ headerShown: false }} mode="modal">
-      <Screen name="Tabs" component={TabsNav} />
-      <Screen name={routes.comments} component={Comments} />
-      <Screen name={routes.upload} component={Upload} />
+    <Navigator>
+      <Group
+        screenOptions={{ animationPresentation: 'modal', headerShown: false }}
+      >
+        <Screen name="Tabs" component={TabsNav} />
+        <Screen name={routes.upload} component={UploadNav} />
+      </Group>
+      <Group
+        screenOptions={{
+          headerTintColor: 'white',
+          headerBackTitle: ' ',
+          headerStyle: {
+            backgroundColor: 'black',
+            shadowColor: 'rgba(255, 255, 255, 0.3)',
+          },
+        }}
+      >
+        <Screen name={routes.comments} component={Comments} />
+      </Group>
     </Navigator>
   );
 };

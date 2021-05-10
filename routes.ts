@@ -11,4 +11,6 @@ export default {
   likes: 'likes',
   comments: 'comments',
   upload: 'upload',
+  takePhoto: 'Take',
+  selectPhoto: 'Select',
 };
