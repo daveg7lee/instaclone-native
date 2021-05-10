@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Image, useWindowDimensions } from 'react-native';
 import { colors } from '../colors';
+import { RouteProps } from '../types';
 
 const Container = styled.View`
   flex: 1;
@@ -26,7 +27,14 @@ const IconContainer = styled.View`
   right: 0px;
 `;
 
-function SelectPhoto() {
+const HeaderRightText = styled.Text`
+  color: ${colors.blue};
+  margin-right: 12px;
+  font-size: 16px;
+  font-weight: 600;
+`;
+
+function SelectPhoto({ navigation }: RouteProps) {
   const [ok, setOk] = useState(false);
   const [photos, setPhotos] = useState<any>([]);
   const [chosenPhoto, setChosenPhoto] = useState('');
@@ -70,9 +78,17 @@ function SelectPhoto() {
       </IconContainer>
     </ImageContainer>
   );
+  const headerRight = () => (
+    <TouchableOpacity>
+      <HeaderRightText>Next</HeaderRightText>
+    </TouchableOpacity>
+  );
   useEffect(() => {
     getPermissions();
     getPhotos();
+    navigation.setOptions({
+      headerRight: headerRight,
+    });
   }, [ok]);
   return (
     <Container>
