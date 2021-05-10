@@ -3,7 +3,6 @@ import { Text } from 'react-native';
 import ScreenLayout from '../components/ScreenLayout';
 
 export default function Profile({ route: { params }, navigation }) {
-  console.log(params);
   useEffect(() => {
     navigation.setOptions({
       title: params?.username,

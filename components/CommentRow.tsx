@@ -24,6 +24,7 @@ const Avatar = styled.Image`
   border-radius: 25px;
   margin-right: 10px;
 `;
+
 const Username = styled.Text`
   font-weight: 600;
   color: white;

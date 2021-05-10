@@ -13,7 +13,7 @@ import PhotoScreen from '../screens/PhotoScreen';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export default function StackNavFactory({ screenName }) {
+export default function SharedStackNav({ screenName }) {
   return (
     <Navigator
       screenOptions={{
@@ -22,7 +22,7 @@ export default function StackNavFactory({ screenName }) {
           shadowColor: 'rgba(255, 255, 255, 0.3)',
         },
         headerTintColor: 'white',
-        headerBackTitle: 'Back',
+        headerBackTitle: ' ',
       }}
     >
       {screenName === routes.feed ? (
@@ -55,7 +55,6 @@ export default function StackNavFactory({ screenName }) {
       <Screen name={routes.profile} component={Profile} />
       <Screen name={routes.photo} component={PhotoScreen} />
       <Screen name={routes.likes} component={Likes} />
-      <Screen name={routes.comments} component={Comments} />
     </Navigator>
   );
 }

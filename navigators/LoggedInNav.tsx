@@ -1,98 +1,20 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import TabsNav from './TabsNav';
 import routes from '../routes';
-import { Image, View } from 'react-native';
-import TabIcon from '../components/nav/TabIcon';
-import StackNavFactory from './SharedStackNav';
-import useMe from '../hooks/useMe';
-import { UserType } from '../types';
-import styled from 'styled-components/native';
+import Comments from '../screens/Comments';
+import Upload from '../screens/Upload';
 
-const { Navigator, Screen } = createBottomTabNavigator();
+const { Navigator, Screen } = createStackNavigator();
 
-interface DataType {
-  me: UserType;
-}
-
-const Profile = styled.Image`
-  height: 22px;
-  width: 22px;
-  border-radius: 999px;
-`;
-
-const LoggedOutNav = () => {
-  const data: DataType = useMe();
+const LoggedInNav = () => {
   return (
-    <Navigator
-      initialRouteName={routes.feed}
-      tabBarOptions={{
-        activeTintColor: 'white',
-        showLabel: false,
-        style: {
-          borderTopColor: 'rgba(255, 255, 255, 0.3)',
-          backgroundColor: 'black',
-        },
-      }}
-    >
-      <Screen
-        name={routes.feed}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon name="home" color={color} focused={focused} />
-          ),
-        }}
-      >
-        {() => <StackNavFactory screenName={routes.feed} />}
-      </Screen>
-      <Screen
-        name={routes.search}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon name="search" color={color} focused={focused} />
-          ),
-        }}
-      >
-        {() => <StackNavFactory screenName={routes.search} />}
-      </Screen>
-      <Screen
-        name={'camera'}
-        component={View}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon name="add-circle" color={color} focused={focused} />
-          ),
-        }}
-      />
-      <Screen
-        name={routes.notification}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon name="heart" color={color} focused={focused} />
-          ),
-        }}
-      >
-        {() => <StackNavFactory screenName={routes.notification} />}
-      </Screen>
-      <Screen
-        name={routes.me}
-        options={{
-          tabBarIcon: ({ focused, color, size }) =>
-            data?.me?.avatar ? (
-              <Profile
-                source={{ uri: data.me.avatar }}
-                style={{
-                  ...(focused && { borderColor: 'white', borderWidth: 1 }),
-                }}
-              />
-            ) : (
-              <TabIcon name={'person'} color={color} focused={focused} />
-            ),
-        }}
-      >
-        {() => <StackNavFactory screenName={routes.me} />}
-      </Screen>
+    <Navigator screenOptions={{ headerShown: false }} mode="modal">
+      <Screen name="Tabs" component={TabsNav} />
+      <Screen name={routes.comments} component={Comments} />
+      <Screen name={routes.upload} component={Upload} />
     </Navigator>
   );
 };
 
-export default LoggedOutNav;
+export default LoggedInNav;

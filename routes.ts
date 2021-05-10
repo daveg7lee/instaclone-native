@@ -10,4 +10,5 @@ export default {
   photo: 'photo',
   likes: 'likes',
   comments: 'comments',
+  upload: 'upload',
 };

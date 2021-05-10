@@ -2,11 +2,12 @@ import React from 'react';
 import { Text } from 'react-native';
 import ScreenLayout from '../components/ScreenLayout';
 
-function Notifications() {
+function Upload() {
   return (
     <ScreenLayout>
-      <Text style={{ color: 'white' }}>Notifications</Text>
+      <Text style={{ color: 'white' }}>Upload</Text>
     </ScreenLayout>
   );
 }
-export default Notifications;
+
+export default Upload;

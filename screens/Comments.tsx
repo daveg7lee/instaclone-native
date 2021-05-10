@@ -7,6 +7,7 @@ import DismissKeyboard from '../components/DismissKeyboard';
 import { USER_FRAGMENT } from '../fragments';
 import CommentRow from '../components/CommentRow';
 import { useForm } from 'react-hook-form';
+import useMe from '../hooks/useMe';
 
 const Container = styled.KeyboardAvoidingView`
   flex: 1;
@@ -15,8 +16,27 @@ const Container = styled.KeyboardAvoidingView`
 
 const Input = styled.TextInput`
   background-color: white;
+  width: 75%;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: 999px;
+  border: lightgray;
+  margin-bottom: 10px;
+`;
+
+const Avatar = styled.Image`
+  width: 45px;
+  height: 45px;
+  border-radius: 25px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+`;
+
+const InputContainer = styled.View`
+  background-color: black;
+  height: 90px;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
 `;
 
 const SEE_PHOTO_COMMENTS = gql`
@@ -50,6 +70,7 @@ function Comments({
     params: { id: photoId },
   },
 }) {
+  const { me } = useMe();
   const { register, setValue, handleSubmit, watch } = useForm();
   useEffect(() => {
     register(PAYLOAD, { required: true, minLength: 3 });
@@ -70,7 +91,7 @@ function Comments({
     <DismissKeyboard>
       <Container
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <FlatList
           style={{
@@ -89,14 +110,17 @@ function Comments({
           keyExtractor={(comment) => '' + comment.id}
           renderItem={renderItem}
         />
-        <Input
-          placeholder="Write Comment..."
-          autoCorrect={false}
-          placeholderTextColor="rgba(0, 0, 0, 0.8)"
-          onChangeText={(text) => setValue(PAYLOAD, text)}
-          value={watch(PAYLOAD)}
-          onSubmitEditing={handleSubmit(onValid)}
-        />
+        <InputContainer>
+          <Avatar source={{ uri: me?.avatar }} />
+          <Input
+            placeholder="Write Comment..."
+            autoCorrect={false}
+            placeholderTextColor="rgba(0, 0, 0, 0.8)"
+            onChangeText={(text) => setValue(PAYLOAD, text)}
+            value={watch(PAYLOAD)}
+            onSubmitEditing={handleSubmit(onValid)}
+          />
+        </InputContainer>
       </Container>
     </DismissKeyboard>
   );
