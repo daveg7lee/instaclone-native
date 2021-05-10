@@ -14,12 +14,18 @@ const LoggedInNav = () => {
         screenOptions={{ animationPresentation: 'modal', headerShown: false }}
       >
         <Screen name="Tabs" component={TabsNav} />
-        <Screen name={routes.upload} component={UploadNav} />
+        <Screen
+          name={routes.upload}
+          component={UploadNav}
+          options={{
+            detachPreviousScreen: true,
+          }}
+        />
       </Group>
       <Group
         screenOptions={{
           headerTintColor: 'white',
-          headerBackTitle: ' ',
+          headerBackTitleVisible: false,
           headerStyle: {
             backgroundColor: 'black',
             shadowColor: 'rgba(255, 255, 255, 0.3)',

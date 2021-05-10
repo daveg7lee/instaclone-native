@@ -1,12 +1,25 @@
 import React from 'react';
-import { Text } from 'react-native';
-import ScreenLayout from '../components/ScreenLayout';
+import styled from 'styled-components/native';
+
+const Container = styled.View`
+  flex: 1;
+  background-color: black;
+`;
+
+const Top = styled.View`
+  flex: 1;
+`;
+
+const Bottom = styled.View`
+  flex: 1;
+`;
 
 function SelectPhoto() {
   return (
-    <ScreenLayout>
-      <Text style={{ color: 'white' }}>Select Photo</Text>
-    </ScreenLayout>
+    <Container>
+      <Top></Top>
+      <Bottom></Bottom>
+    </Container>
   );
 }
 

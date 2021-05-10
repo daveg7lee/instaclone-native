@@ -1,9 +1,10 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
 import SelectPhoto from '../screens/SelectPhoto';
 import TakePhoto from '../screens/TakePhoto';
 import routes from '../routes';
-import { createStackNavigator } from '@react-navigation/stack';
 
 const { Screen, Navigator } = createMaterialTopTabNavigator();
 
@@ -21,8 +22,29 @@ function UploadNav() {
     >
       <Screen name={routes.selectPhoto}>
         {() => (
-          <Stack.Navigator>
-            <Stack.Screen name={routes.selectPhoto} component={SelectPhoto} />
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: 'black',
+                shadowColor: 'rgba(255, 255, 255, 0.3)',
+              },
+              headerTintColor: 'white',
+              headerBackTitleVisible: false,
+              headerBackImage: () => (
+                <Ionicons
+                  name="close"
+                  color="white"
+                  size={28}
+                  style={{ marginLeft: 10 }}
+                />
+              ),
+            }}
+          >
+            <Stack.Screen
+              name={routes.selectPhoto}
+              options={{ title: 'Choose a photo' }}
+              component={SelectPhoto}
+            />
           </Stack.Navigator>
         )}
       </Screen>

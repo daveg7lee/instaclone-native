@@ -21,7 +21,7 @@ export default function SharedStackNav({ screenName }) {
           shadowColor: 'rgba(255, 255, 255, 0.3)',
         },
         headerTintColor: 'white',
-        headerBackTitle: ' ',
+        headerBackTitleVisible: false,
       }}
     >
       {screenName === routes.feed ? (
