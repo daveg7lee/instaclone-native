@@ -41,7 +41,7 @@ function UploadNav() {
             }}
           >
             <Stack.Screen
-              name={routes.selectPhoto}
+              name={'Stack' + routes.selectPhoto}
               options={{ title: 'Choose a photo' }}
               component={SelectPhoto}
             />
