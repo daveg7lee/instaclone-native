@@ -17,7 +17,7 @@ const Top = styled.View`
 `;
 
 const Bottom = styled.View`
-  flex: 1;
+  flex: 0.7;
 `;
 
 const ImageContainer = styled.TouchableOpacity``;
