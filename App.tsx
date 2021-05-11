@@ -28,11 +28,6 @@ export default function App() {
       isLoggedInVar(Boolean(tokenExists));
       tokenVar(tokenExists);
     }
-    await persistCache({
-      cache,
-      storage: new AsyncStorageWrapper(AsyncStorage),
-      serialize: false,
-    });
     return preloadAssets();
   };
   if (loading) {

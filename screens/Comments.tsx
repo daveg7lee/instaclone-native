@@ -71,18 +71,69 @@ function Comments({
   },
 }) {
   const { me } = useMe();
-  const { register, setValue, handleSubmit, watch } = useForm();
+  const { register, setValue, handleSubmit, watch, getValues } = useForm();
   useEffect(() => {
     register(PAYLOAD, { required: true, minLength: 3 });
   }, [register]);
+  const createCommentUpdate = (
+    cache: any,
+    {
+      data: {
+        createComment: { success, id },
+      },
+    }: any
+  ) => {
+    const { payload } = getValues();
+    setValue(PAYLOAD, '');
+    if (success && me) {
+      const commentData = {
+        id,
+        createdAt: Date.now(),
+        isMine: true,
+        payload,
+        user: {
+          username: me.username,
+          avatar: me.avatar,
+        },
+        __typename: 'Comment',
+      };
+      console.log(commentData);
+      const newComment = cache.writeFragment({
+        data: commentData,
+        fragment: gql`
+          fragment BSName on Comment {
+            id
+            createdAt
+            isMine
+            payload
+            user {
+              username
+              avatar
+            }
+          }
+        `,
+      });
+      cache.modify({
+        id: `Photo:${photoId}`,
+        fields: {
+          comments(prev) {
+            return [...prev, newComment];
+          },
+          commentNumbers(prev: number) {
+            return prev + 1;
+          },
+        },
+      });
+    }
+  };
   const { data, fetchMore, refetch } = useQuery(SEE_PHOTO_COMMENTS, {
     variables: { id: photoId, offset: 0 },
   });
-  const [createCommentMutation] = useMutation(CREATE_COMMENT_MUTATION);
+  const [createCommentMutation] = useMutation(CREATE_COMMENT_MUTATION, {
+    update: createCommentUpdate,
+  });
   const onValid = async ({ payload }) => {
     await createCommentMutation({ variables: { payload, photoId } });
-    setValue(PAYLOAD, '');
-    refetch();
   };
   const renderItem = ({ item: comment }) => (
     <CommentRow {...comment} photoId={photoId} />

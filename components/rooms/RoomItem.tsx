@@ -54,16 +54,16 @@ function RoomItem({ room }: any) {
       }
     >
       <Column>
-        <Avatar source={{ uri: talkingTo.avatar }} />
+        <Avatar source={{ uri: talkingTo?.avatar }} />
         <Data>
-          <Username>{talkingTo.username}</Username>
+          <Username>{talkingTo?.username}</Username>
           <UnreadText>
-            {room.unreadTotal} unread{' '}
-            {room.unreadTotal === 1 ? 'message' : 'messages'}
+            {room?.unreadTotal} unread{' '}
+            {room?.unreadTotal === 1 ? 'message' : 'messages'}
           </UnreadText>
         </Data>
       </Column>
-      <Column>{room.unreadTotal !== 0 ? <UnreadDot /> : null}</Column>
+      <Column>{room?.unreadTotal !== 0 ? <UnreadDot /> : null}</Column>
     </RoomContainer>
   );
 }
