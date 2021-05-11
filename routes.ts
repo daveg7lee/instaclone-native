@@ -13,4 +13,6 @@ export default {
   upload: 'upload',
   takePhoto: 'Take',
   selectPhoto: 'Select',
+  rooms: 'Rooms',
+  room: 'Room',
 };

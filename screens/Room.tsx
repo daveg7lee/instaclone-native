@@ -1,10 +1,41 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import React, { useEffect } from 'react';
+import { Text } from 'react-native';
+import ScreenLayout from '../components/ScreenLayout';
 
-export default function Rooms() {
+const ROOM_QUERY = gql`
+  query seeRoom($id: Int!) {
+    seeRoom(id: $id) {
+      messages {
+        id
+        payload
+        user {
+          username
+          avatar
+        }
+        read
+      }
+    }
+  }
+`;
+
+export default function Room({
+  route: {
+    params: { id, talkingTo },
+  },
+  navigation,
+}) {
+  const { data } = useQuery(ROOM_QUERY, { variables: { id } });
+  console.log(data);
+  useEffect(() => {
+    navigation.setOptions({
+      title: talkingTo?.username,
+    });
+  }, []);
   return (
-    <View>
-      <Text>Room List</Text>
-    </View>
+    <ScreenLayout>
+      <Text>Room</Text>
+    </ScreenLayout>
   );
 }

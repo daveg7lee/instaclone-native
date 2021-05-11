@@ -1,13 +1,11 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import styled from 'styled-components/native';
-import { colors } from '../colors';
+import RoomItem from '../components/rooms/RoomItem';
 import ScreenLayout from '../components/ScreenLayout';
 import { ROOM_FRAGMENT } from '../fragments';
-import useMe from '../hooks/useMe';
 
 const SEE_ROOMS_QUERY = gql`
   query seeRooms {
@@ -18,65 +16,9 @@ const SEE_ROOMS_QUERY = gql`
   ${ROOM_FRAGMENT}
 `;
 
-const RoomContainer = styled.TouchableOpacity`
-  width: 100%;
-  padding: 15px 10px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Column = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`;
-const Avatar = styled.Image`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  margin-right: 20px;
-`;
-const Data = styled.View``;
-
-const UnreadDot = styled.View`
-  width: 10px;
-  border-radius: 5px;
-  height: 10px;
-  background-color: ${colors.blue};
-`;
-const Username = styled.Text`
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-`;
-const UnreadText = styled.Text`
-  color: white;
-  margin-top: 2px;
-  font-weight: 500;
-`;
-
-export default function Room() {
-  const { data, loading } = useQuery(SEE_ROOMS_QUERY);
-  const { me } = useMe();
-  const renderItem = ({ item: room }) => {
-    const notMe = room.users.find((user) => user.username !== me?.username);
-    return (
-      <RoomContainer>
-        <Column>
-          <Avatar source={{ uri: notMe.avatar }} />
-          <Data>
-            <Username>{notMe.username}</Username>
-            <UnreadText>
-              {room.unreadTotal} unread{' '}
-              {room.unreadTotal === 1 ? 'message' : 'messages'}
-            </UnreadText>
-          </Data>
-        </Column>
-        <Column>{room.unreadTotal !== 0 ? <UnreadDot /> : null}</Column>
-      </RoomContainer>
-    );
-  };
+export default function Rooms() {
+  const { data, loading, refetch } = useQuery(SEE_ROOMS_QUERY);
+  const renderItem = ({ item: room }: any) => <RoomItem room={room} />;
   return (
     <ScreenLayout loading={loading}>
       <FlatList
@@ -93,6 +35,9 @@ export default function Room() {
         data={data?.seeRooms}
         keyExtractor={(room) => '' + room.id}
         renderItem={renderItem}
+        refreshing={false}
+        onRefresh={refetch}
+        showsVerticalScrollIndicator={false}
       />
     </ScreenLayout>
   );
