@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import { StatusBar } from 'react-native';
+import { Image, StatusBar } from 'react-native';
 import { RouteProps } from '../types';
 
 const Container = styled.View`
@@ -42,6 +42,15 @@ const ActionBtn = styled.TouchableOpacity`
   align-items: center;
 `;
 
+const PhotoAction = styled.TouchableOpacity`
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+`;
+const PhotoActionText = styled.Text`
+  font-weight: 600;
+`;
+
 const TakePhotoBtn = styled.TouchableOpacity`
   width: 80px;
   height: 80px;
@@ -60,6 +69,7 @@ const CloseBtn = styled.TouchableOpacity`
 
 function TakePhoto({ navigation }: RouteProps) {
   const camera: any = useRef();
+  const [takenPhoto, setTakenPhoto] = useState('');
   const [cameraReady, setCameraReady] = useState(false);
   const [ok, setOk] = useState(false);
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
@@ -98,13 +108,14 @@ function TakePhoto({ navigation }: RouteProps) {
   const onCameraReady = () => setCameraReady(true);
   const takePhoto = async () => {
     if (camera.current && cameraReady) {
-      const photo = await camera.current.takePictureAsync({
+      const { uri } = await camera.current.takePictureAsync({
         quality: 1,
         exit: true,
       });
-      console.log(photo);
+      setTakenPhoto(uri);
     }
   };
+  const onDismiss = () => setTakenPhoto('');
   return (
     <Container>
       <StatusBar hidden />
@@ -116,57 +127,77 @@ function TakePhoto({ navigation }: RouteProps) {
         </PermissionsContainer>
       ) : (
         <>
-          <Camera
-            type={cameraType}
-            style={{ flex: 1 }}
-            zoom={zoom}
-            flashMode={flashMode}
-            ref={camera}
-            onCameraReady={onCameraReady}
-          >
-            <CloseBtn onPress={() => navigation.navigate('Tabs')}>
-              <Ionicons name="close" size={30} color="white" />
-            </CloseBtn>
-          </Camera>
-          <Actions>
-            <SliderContainer>
-              <Slider
-                style={{ width: 200, height: 20 }}
-                minimumValue={0}
-                maximumValue={1}
-                minimumTrackTintColor="#FFFFFF"
-                maximumTrackTintColor="rgba(255, 255, 255, 0.5)"
-                onValueChange={onZoomValueChange}
-              />
-            </SliderContainer>
-            <ButtonsContainer>
-              <ActionBtn onPress={onFlashChange}>
-                <Ionicons
-                  size={30}
-                  color="white"
-                  name={
-                    flashMode === Camera.Constants.FlashMode.off
-                      ? 'flash-off'
-                      : flashMode === Camera.Constants.FlashMode.on
-                      ? 'flash'
-                      : flashMode === Camera.Constants.FlashMode.auto && 'eye'
-                  }
+          {takenPhoto === '' ? (
+            <Camera
+              type={cameraType}
+              style={{ flex: 1 }}
+              zoom={zoom}
+              flashMode={flashMode}
+              ref={camera}
+              onCameraReady={onCameraReady}
+            >
+              <CloseBtn onPress={() => navigation.navigate('Tabs')}>
+                <Ionicons name="close" color="white" size={30} />
+              </CloseBtn>
+            </Camera>
+          ) : (
+            <Image source={{ uri: takenPhoto }} style={{ flex: 1 }} />
+          )}
+          {takenPhoto === '' ? (
+            <Actions>
+              <SliderContainer>
+                <Slider
+                  style={{ width: 200, height: 20 }}
+                  minimumValue={0}
+                  maximumValue={1}
+                  minimumTrackTintColor="#FFFFFF"
+                  maximumTrackTintColor="rgba(255, 255, 255, 0.5)"
+                  onValueChange={onZoomValueChange}
                 />
-              </ActionBtn>
-              <TakePhotoBtn onPress={takePhoto} />
-              <ActionBtn onPress={onCameraSwitch}>
-                <Ionicons
-                  size={30}
-                  color="white"
-                  name={
-                    cameraType === Camera.Constants.Type.front
-                      ? 'camera-reverse'
-                      : 'camera'
-                  }
-                />
-              </ActionBtn>
-            </ButtonsContainer>
-          </Actions>
+              </SliderContainer>
+              <ButtonsContainer>
+                <ActionBtn onPress={onFlashChange}>
+                  <Ionicons
+                    size={30}
+                    color="white"
+                    name={
+                      flashMode === Camera.Constants.FlashMode.off
+                        ? 'flash-off'
+                        : flashMode === Camera.Constants.FlashMode.on
+                        ? 'flash'
+                        : flashMode === Camera.Constants.FlashMode.auto
+                        ? 'eye'
+                        : ''
+                    }
+                  />
+                </ActionBtn>
+                <TakePhotoBtn onPress={takePhoto} />
+                <ActionBtn onPress={onCameraSwitch}>
+                  <Ionicons
+                    size={30}
+                    color="white"
+                    name={
+                      cameraType === Camera.Constants.Type.front
+                        ? 'camera-reverse'
+                        : 'camera'
+                    }
+                  />
+                </ActionBtn>
+              </ButtonsContainer>
+            </Actions>
+          ) : (
+            <Actions>
+              <PhotoAction onPress={onDismiss}>
+                <PhotoActionText>Dismiss</PhotoActionText>
+              </PhotoAction>
+              <PhotoAction>
+                <PhotoActionText>Upload</PhotoActionText>
+              </PhotoAction>
+              <PhotoAction>
+                <PhotoActionText>Save & Upload</PhotoActionText>
+              </PhotoAction>
+            </Actions>
+          )}
         </>
       )}
     </Container>
