@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/native';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
@@ -43,8 +43,8 @@ const ActionBtn = styled.TouchableOpacity`
 `;
 
 const TakePhotoBtn = styled.TouchableOpacity`
-  width: 85px;
-  height: 85px;
+  width: 80px;
+  height: 80px;
   background-color: rgba(255, 255, 255, 0.5);
   border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 999px;
@@ -59,6 +59,8 @@ const CloseBtn = styled.TouchableOpacity`
 `;
 
 function TakePhoto({ navigation }: RouteProps) {
+  const camera: any = useRef();
+  const [cameraReady, setCameraReady] = useState(false);
   const [ok, setOk] = useState(false);
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
   const [zoom, setZoom] = useState(0);
@@ -93,6 +95,16 @@ function TakePhoto({ navigation }: RouteProps) {
         break;
     }
   };
+  const onCameraReady = () => setCameraReady(true);
+  const takePhoto = async () => {
+    if (camera.current && cameraReady) {
+      const photo = await camera.current.takePictureAsync({
+        quality: 1,
+        exit: true,
+      });
+      console.log(photo);
+    }
+  };
   return (
     <Container>
       <StatusBar hidden />
@@ -109,6 +121,8 @@ function TakePhoto({ navigation }: RouteProps) {
             style={{ flex: 1 }}
             zoom={zoom}
             flashMode={flashMode}
+            ref={camera}
+            onCameraReady={onCameraReady}
           >
             <CloseBtn onPress={() => navigation.navigate('Tabs')}>
               <Ionicons name="close" size={30} color="white" />
@@ -139,7 +153,7 @@ function TakePhoto({ navigation }: RouteProps) {
                   }
                 />
               </ActionBtn>
-              <TakePhotoBtn />
+              <TakePhotoBtn onPress={takePhoto} />
               <ActionBtn onPress={onCameraSwitch}>
                 <Ionicons
                   size={30}

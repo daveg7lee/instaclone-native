@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import * as MediaLibrary from 'expo-media-library';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
-import { Image, StatusBar, useWindowDimensions } from 'react-native';
+import { Image, Platform, StatusBar, useWindowDimensions } from 'react-native';
 import { colors } from '../colors';
 import { RouteProps } from '../types';
 
@@ -39,7 +39,7 @@ function SelectPhoto({ navigation }: RouteProps) {
   const [photos, setPhotos] = useState<any>([]);
   const [chosenPhoto, setChosenPhoto] = useState('');
   const getPhotos = async () => {
-    if (ok) {
+    if (ok && Platform.OS !== 'web') {
       const { assets: photos } = await MediaLibrary.getAssetsAsync();
       setPhotos(photos);
     }
