@@ -13,6 +13,7 @@ import {
 import { colors } from '../colors';
 import { RouteProps } from '../types';
 import routes from '../routes';
+import HeaderRight from '../components/HeaderRight';
 
 const Container = styled.View`
   flex: 1;
@@ -32,13 +33,6 @@ const IconContainer = styled.View`
   position: absolute;
   bottom: 5px;
   right: 0px;
-`;
-
-const HeaderRightText = styled.Text`
-  color: ${colors.blue};
-  margin-right: 12px;
-  font-size: 16px;
-  font-weight: 600;
 `;
 
 function SelectPhoto({ navigation }: RouteProps) {
@@ -85,20 +79,23 @@ function SelectPhoto({ navigation }: RouteProps) {
       </IconContainer>
     </ImageContainer>
   );
-  const headerRight = () => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate(routes.upload, { file: chosenPhoto })}
-    >
-      <HeaderRightText>Next</HeaderRightText>
-    </TouchableOpacity>
-  );
+  const goToUpload = () => {
+    if (!chosenPhoto) {
+      Alert.alert('Please Choose Photo');
+    } else {
+      navigation.navigate(routes.upload, { file: chosenPhoto });
+    }
+  };
   useEffect(() => {
     getPermissions();
     getPhotos();
+  }, [ok]);
+  const headerRight = () => <HeaderRight text="Next" onPress={goToUpload} />;
+  useEffect(() => {
     navigation.setOptions({
       headerRight: headerRight,
     });
-  }, [ok]);
+  }, [chosenPhoto]);
   return (
     <Container>
       <StatusBar hidden />
