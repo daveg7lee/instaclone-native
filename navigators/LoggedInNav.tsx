@@ -4,6 +4,7 @@ import TabsNav from './TabsNav';
 import routes from '../routes';
 import Comments from '../screens/Comments';
 import UploadNav from './UploadNav';
+import Upload from '../screens/Upload';
 
 const { Group, Navigator, Screen } = createStackNavigator();
 
@@ -14,7 +15,7 @@ const LoggedInNav = () => {
         screenOptions={{ animationPresentation: 'modal', headerShown: false }}
       >
         <Screen name="Tabs" component={TabsNav} />
-        <Screen name={routes.upload} component={UploadNav} />
+        <Screen name={'UploadNav'} component={UploadNav} />
       </Group>
       <Group
         screenOptions={{
@@ -27,6 +28,11 @@ const LoggedInNav = () => {
         }}
       >
         <Screen name={routes.comments} component={Comments} />
+        <Screen
+          name={routes.upload}
+          options={{ title: 'Upload' }}
+          component={Upload}
+        />
       </Group>
     </Navigator>
   );

@@ -62,7 +62,7 @@ const TabsNav = () => {
           return {
             tabPress: (e) => {
               e.preventDefault();
-              navigation.navigate(routes.upload);
+              navigation.navigate('UploadNav');
             },
           };
         }}

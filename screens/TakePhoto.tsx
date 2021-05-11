@@ -3,9 +3,11 @@ import styled from 'styled-components/native';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import { Alert, Image, Platform, StatusBar } from 'react-native';
+import { Alert, Image, Platform, StatusBar, View } from 'react-native';
 import { RouteProps } from '../types';
 import * as MediaLibrary from 'expo-media-library';
+import { useIsFocused } from '@react-navigation/core';
+import routes from '../routes';
 
 const Container = styled.View`
   flex: 1;
@@ -114,7 +116,7 @@ function TakePhoto({ navigation }: RouteProps) {
     if (save && Platform.OS !== 'web') {
       await MediaLibrary.saveToLibraryAsync(takenPhoto);
     }
-    console.log('Will upload', takenPhoto);
+    navigation.navigate(routes.upload, { file: takenPhoto });
   };
   const onUpload = () => {
     Alert.alert('Save photo?', 'Save photo & upload or just upload', [
@@ -139,6 +141,7 @@ function TakePhoto({ navigation }: RouteProps) {
     }
   };
   const onDismiss = () => setTakenPhoto('');
+  const isFocused = useIsFocused();
   return (
     <Container>
       <StatusBar hidden />
@@ -151,18 +154,26 @@ function TakePhoto({ navigation }: RouteProps) {
       ) : (
         <>
           {takenPhoto === '' ? (
-            <Camera
-              type={cameraType}
-              style={{ flex: 1 }}
-              zoom={zoom}
-              flashMode={flashMode}
-              ref={camera}
-              onCameraReady={onCameraReady}
-            >
-              <CloseBtn onPress={() => navigation.navigate('Tabs')}>
-                <Ionicons name="close" color="white" size={30} />
-              </CloseBtn>
-            </Camera>
+            isFocused ? (
+              <Camera
+                type={cameraType}
+                style={{ flex: 1 }}
+                zoom={zoom}
+                flashMode={flashMode}
+                ref={camera}
+                onCameraReady={onCameraReady}
+              >
+                <CloseBtn onPress={() => navigation.navigate('Tabs')}>
+                  <Ionicons name="close" color="white" size={30} />
+                </CloseBtn>
+              </Camera>
+            ) : (
+              <View style={{ flex: 1 }}>
+                <CloseBtn onPress={() => navigation.navigate('Tabs')}>
+                  <Ionicons name="close" color="white" size={30} />
+                </CloseBtn>
+              </View>
+            )
           ) : (
             <Image source={{ uri: takenPhoto }} style={{ flex: 1 }} />
           )}

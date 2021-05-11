@@ -3,9 +3,16 @@ import styled from 'styled-components/native';
 import * as MediaLibrary from 'expo-media-library';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
-import { Image, Platform, StatusBar, useWindowDimensions } from 'react-native';
+import {
+  Alert,
+  Image,
+  Platform,
+  StatusBar,
+  useWindowDimensions,
+} from 'react-native';
 import { colors } from '../colors';
 import { RouteProps } from '../types';
+import routes from '../routes';
 
 const Container = styled.View`
   flex: 1;
@@ -60,12 +67,11 @@ function SelectPhoto({ navigation }: RouteProps) {
   };
   const numColumns = 4;
   const { width } = useWindowDimensions();
-  const choosePhoto = (uri) => {
+  const choosePhoto = async (uri) => {
     setChosenPhoto(uri);
   };
   const renderItem = ({ item: photo }) => (
     <ImageContainer onPress={() => choosePhoto(photo.uri)}>
-      <StatusBar hidden />
       <Image
         source={{ uri: photo.uri }}
         style={{ width: width / numColumns, height: 100 }}
@@ -80,7 +86,9 @@ function SelectPhoto({ navigation }: RouteProps) {
     </ImageContainer>
   );
   const headerRight = () => (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => navigation.navigate(routes.upload, { file: chosenPhoto })}
+    >
       <HeaderRightText>Next</HeaderRightText>
     </TouchableOpacity>
   );
@@ -93,6 +101,7 @@ function SelectPhoto({ navigation }: RouteProps) {
   }, [ok]);
   return (
     <Container>
+      <StatusBar hidden />
       <Top>
         {chosenPhoto !== '' ? (
           <Image
