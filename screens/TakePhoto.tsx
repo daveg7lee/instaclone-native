@@ -3,8 +3,9 @@ import styled from 'styled-components/native';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import { Image, StatusBar } from 'react-native';
+import { Alert, Image, Platform, StatusBar } from 'react-native';
 import { RouteProps } from '../types';
+import * as MediaLibrary from 'expo-media-library';
 
 const Container = styled.View`
   flex: 1;
@@ -44,7 +45,7 @@ const ActionBtn = styled.TouchableOpacity`
 
 const PhotoAction = styled.TouchableOpacity`
   background-color: white;
-  padding: 5px 10px;
+  padding: 10px 25px;
   border-radius: 4px;
 `;
 const PhotoActionText = styled.Text`
@@ -57,6 +58,10 @@ const TakePhotoBtn = styled.TouchableOpacity`
   background-color: rgba(255, 255, 255, 0.5);
   border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 999px;
+`;
+
+const PhotoActions = styled(Actions)`
+  flex-direction: row;
 `;
 
 const SliderContainer = styled.View``;
@@ -104,6 +109,24 @@ function TakePhoto({ navigation }: RouteProps) {
         setFlashMode(Camera.Constants.FlashMode.off);
         break;
     }
+  };
+  const goToUpload = async (save) => {
+    if (save && Platform.OS !== 'web') {
+      await MediaLibrary.saveToLibraryAsync(takenPhoto);
+    }
+    console.log('Will upload', takenPhoto);
+  };
+  const onUpload = () => {
+    Alert.alert('Save photo?', 'Save photo & upload or just upload', [
+      {
+        text: 'Save & Upload',
+        onPress: () => goToUpload(true),
+      },
+      {
+        text: 'Just Upload',
+        onPress: () => goToUpload(false),
+      },
+    ]);
   };
   const onCameraReady = () => setCameraReady(true);
   const takePhoto = async () => {
@@ -153,6 +176,7 @@ function TakePhoto({ navigation }: RouteProps) {
                   minimumTrackTintColor="#FFFFFF"
                   maximumTrackTintColor="rgba(255, 255, 255, 0.5)"
                   onValueChange={onZoomValueChange}
+                  value={zoom}
                 />
               </SliderContainer>
               <ButtonsContainer>
@@ -186,17 +210,14 @@ function TakePhoto({ navigation }: RouteProps) {
               </ButtonsContainer>
             </Actions>
           ) : (
-            <Actions>
+            <PhotoActions>
               <PhotoAction onPress={onDismiss}>
                 <PhotoActionText>Dismiss</PhotoActionText>
               </PhotoAction>
-              <PhotoAction>
+              <PhotoAction onPress={onUpload}>
                 <PhotoActionText>Upload</PhotoActionText>
               </PhotoAction>
-              <PhotoAction>
-                <PhotoActionText>Save & Upload</PhotoActionText>
-              </PhotoAction>
-            </Actions>
+            </PhotoActions>
           )}
         </>
       )}
