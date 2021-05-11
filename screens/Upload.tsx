@@ -1,11 +1,22 @@
+import { useMutation } from '@apollo/client';
+import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ActivityIndicator, Platform } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-import { colors } from '../colors';
 import DismissKeyboard from '../components/DismissKeyboard';
 import HeaderRight from '../components/HeaderRight';
+import { FEED_PHOTO } from '../fragments';
+import { ReactNativeFile } from 'apollo-upload-client';
+
+const UPLOAD_PHOTO_MUTATION = gql`
+  mutation uploadPhoto($file: Upload!, $caption: String) {
+    uploadPhoto(file: $file, caption: $caption) {
+      ...FeedPhoto
+    }
+  }
+  ${FEED_PHOTO}
+`;
 
 const Container = styled.KeyboardAvoidingView`
   flex: 1;
@@ -30,13 +41,19 @@ const Caption = styled.TextInput`
 
 function Upload({
   route: {
-    params: { file },
+    params: { file: uri },
   },
   navigation,
 }) {
+  const [uploadPhotoMutation, { loading }] = useMutation(UPLOAD_PHOTO_MUTATION);
   const { register, setValue, watch, handleSubmit } = useForm();
-  const onValid = ({ caption }) => {
-    console.log(caption);
+  const onValid = async ({ caption }) => {
+    const file = new ReactNativeFile({
+      uri,
+      name: 'file.jpg',
+      type: 'image/jpeg',
+    });
+    await uploadPhotoMutation({ variables: { file, caption } });
   };
   useEffect(() => {
     register('caption', { required: true });
@@ -49,16 +66,17 @@ function Upload({
   );
   useEffect(() => {
     navigation.setOptions({
-      headerRight: headerRight,
+      headerRight: loading ? headerRightLoading : headerRight,
+      ...(loading && { headerLeft: () => null }),
     });
-  }, [navigation]);
+  }, [loading]);
   return (
     <DismissKeyboard>
       <Container
         behavior="padding"
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
       >
-        <Photo source={{ uri: file }} />
+        <Photo source={{ uri }} />
         <CaptionContainer>
           <Caption
             placeholder="Write a caption..."
