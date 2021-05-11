@@ -14,13 +14,7 @@ const LoggedInNav = () => {
         screenOptions={{ animationPresentation: 'modal', headerShown: false }}
       >
         <Screen name="Tabs" component={TabsNav} />
-        <Screen
-          name={routes.upload}
-          component={UploadNav}
-          options={{
-            detachPreviousScreen: true,
-          }}
-        />
+        <Screen name={routes.upload} component={UploadNav} />
       </Group>
       <Group
         screenOptions={{

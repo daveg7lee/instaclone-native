@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import * as MediaLibrary from 'expo-media-library';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
-import { Image, useWindowDimensions } from 'react-native';
+import { Image, StatusBar, useWindowDimensions } from 'react-native';
 import { colors } from '../colors';
 import { RouteProps } from '../types';
 
@@ -65,6 +65,7 @@ function SelectPhoto({ navigation }: RouteProps) {
   };
   const renderItem = ({ item: photo }) => (
     <ImageContainer onPress={() => choosePhoto(photo.uri)}>
+      <StatusBar hidden />
       <Image
         source={{ uri: photo.uri }}
         style={{ width: width / numColumns, height: 100 }}

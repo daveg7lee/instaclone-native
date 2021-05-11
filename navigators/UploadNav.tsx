@@ -29,7 +29,7 @@ function UploadNav() {
                 shadowColor: 'rgba(255, 255, 255, 0.3)',
               },
               headerTintColor: 'white',
-              headerStatusBarHeight: 30,
+              headerStatusBarHeight: 0,
               headerBackTitleVisible: false,
               headerBackImage: () => (
                 <Ionicons
