@@ -6,6 +6,7 @@ import routes from '../routes';
 import Comments from '../screens/Comments';
 import UploadNav from './UploadNav';
 import Upload from '../screens/Upload';
+import MessagesNav from './MessageNav';
 
 const { Group, Navigator, Screen } = createStackNavigator();
 
@@ -21,6 +22,7 @@ const LoggedInNav = () => {
           options={{ animationEnabled: false }}
         />
         <Screen name={'UploadNav'} component={UploadNav} />
+        <Screen name="Messages" component={MessagesNav} />
       </Group>
       <Group
         screenOptions={{
