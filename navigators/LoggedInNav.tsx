@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
 import TabsNav from './TabsNav';
 import routes from '../routes';
 import Comments from '../screens/Comments';
@@ -14,8 +15,37 @@ const LoggedInNav = () => {
       <Group
         screenOptions={{ animationPresentation: 'modal', headerShown: false }}
       >
-        <Screen name="Tabs" component={TabsNav} />
+        <Screen
+          name="Tabs"
+          component={TabsNav}
+          options={{ animationEnabled: false }}
+        />
         <Screen name={'UploadNav'} component={UploadNav} />
+      </Group>
+      <Group
+        screenOptions={{
+          animationPresentation: 'modal',
+          headerTintColor: 'white',
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: 'black',
+            shadowColor: 'rgba(255, 255, 255, 0.3)',
+          },
+          headerBackImage: () => (
+            <Ionicons
+              name="close"
+              color="white"
+              size={28}
+              style={{ marginLeft: 10 }}
+            />
+          ),
+        }}
+      >
+        <Screen
+          name={routes.upload}
+          options={{ title: 'Upload' }}
+          component={Upload}
+        />
       </Group>
       <Group
         screenOptions={{
@@ -28,11 +58,6 @@ const LoggedInNav = () => {
         }}
       >
         <Screen name={routes.comments} component={Comments} />
-        <Screen
-          name={routes.upload}
-          options={{ title: 'Upload' }}
-          component={Upload}
-        />
       </Group>
     </Navigator>
   );

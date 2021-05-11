@@ -66,13 +66,13 @@ const CaptionText = styled.Text`
   color: white;
 `;
 
-function Photo({ id, user, caption, file, isLiked, likes, commentNumbers }) {
+function Photo({ id, user, caption, file, isLiked, likes }) {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const [imageHeight, setImageHeight] = useState(height - 450);
   useEffect(() => {
     Image.getSize(file, (_, height) => {
-      setImageHeight(height / 3);
+      setImageHeight(height / 4.5);
     });
   }, [file]);
   const goToProfile = () => {
