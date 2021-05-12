@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { Platform, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import DismissKeyboard from '../components/DismissKeyboard';
-import { USER_FRAGMENT } from '../fragments';
+import { COMMENT_FRAGMENT, USER_FRAGMENT } from '../fragments';
 import CommentRow from '../components/CommentRow';
 import { useForm } from 'react-hook-form';
 import useMe from '../hooks/useMe';
@@ -39,18 +39,16 @@ const InputContainer = styled.View`
   flex-direction: row;
 `;
 
-const SEE_PHOTO_COMMENTS = gql`
-  query seePhotoComments($id: Int!, $offset: Int) {
-    seePhotoComments(id: $id, offset: $offset) {
+const SEE_PHOTO = gql`
+  query seePhoto($id: Int!, $offset: Int) {
+    seePhoto(id: $id) {
       id
-      user {
-        ...UserFragment
+      comments(offset: $offset) {
+        ...CommentFragment
       }
-      payload
-      isMine
     }
   }
-  ${USER_FRAGMENT}
+  ${COMMENT_FRAGMENT}
 `;
 
 const CREATE_COMMENT_MUTATION = gql`
@@ -70,6 +68,9 @@ function Comments({
     params: { id: photoId },
   },
 }) {
+  const { data, fetchMore, refetch } = useQuery(SEE_PHOTO, {
+    variables: { id: photoId, offset: 0 },
+  });
   const { me } = useMe();
   const { register, setValue, handleSubmit, watch, getValues } = useForm();
   useEffect(() => {
@@ -85,36 +86,35 @@ function Comments({
   ) => {
     const { payload } = getValues();
     setValue(PAYLOAD, '');
-    if (success && me) {
+    if (success && me && data?.seePhoto) {
       const commentData = {
         id,
-        createdAt: Date.now(),
         isMine: true,
         payload,
         user: {
-          username: me.username,
-          avatar: me.avatar,
+          ...me,
         },
         __typename: 'Comment',
       };
-      console.log(commentData);
       const newComment = cache.writeFragment({
         data: commentData,
         fragment: gql`
           fragment BSName on Comment {
             id
-            createdAt
             isMine
             payload
             user {
+              id
               username
               avatar
+              isFollowing
+              isMe
             }
           }
         `,
       });
       cache.modify({
-        id: `Photo:${photoId}`,
+        id: `Photo:${data?.seePhoto?.id}`,
         fields: {
           comments(prev) {
             return [...prev, newComment];
@@ -126,9 +126,6 @@ function Comments({
       });
     }
   };
-  const { data, fetchMore, refetch } = useQuery(SEE_PHOTO_COMMENTS, {
-    variables: { id: photoId, offset: 0 },
-  });
   const [createCommentMutation] = useMutation(CREATE_COMMENT_MUTATION, {
     update: createCommentUpdate,
   });
@@ -153,14 +150,14 @@ function Comments({
             fetchMore({
               variables: {
                 id: photoId,
-                offset: data?.seePhotoComments?.length,
+                offset: data?.seePhoto?.length,
               },
             })
           }
           refreshing={false}
           onRefresh={refetch}
           showsVerticalScrollIndicator={false}
-          data={data?.seePhotoComments}
+          data={data?.seePhoto?.comments}
           keyExtractor={(comment) => '' + comment.id}
           renderItem={renderItem}
         />

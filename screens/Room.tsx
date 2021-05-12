@@ -72,18 +72,21 @@ export default function Room({
 }) {
   const { me } = useMe();
   const { register, setValue, handleSubmit, getValues, watch } = useForm();
+  useEffect(() => {
+    register('payload', { required: true });
+  }, [register]);
   const updateSendMessage = (cache, result) => {
     const {
       data: {
-        sendMessage: { ok, id },
+        sendMessage: { success, id: messageId },
       },
     } = result;
-    if (ok && me) {
-      const { message } = getValues();
+    if (success && me) {
+      const { payload } = getValues();
       setValue('payload', '');
       const messageObj = {
-        id,
-        payload: message,
+        id: messageId,
+        payload,
         user: {
           username: me.username,
           avatar: me.avatar,
@@ -109,7 +112,7 @@ export default function Room({
         id: `Room:${id}`,
         fields: {
           messages(prev) {
-            return [...prev, messageFragment];
+            return [messageFragment, ...prev];
           },
         },
       });
@@ -140,9 +143,6 @@ export default function Room({
       title: talkingTo?.username,
     });
   }, []);
-  useEffect(() => {
-    register('payload', { required: true });
-  }, [register]);
   const renderItem = ({ item: message }) => (
     <MessageContainer outGoing={message.user.username !== talkingTo?.username}>
       <Author>
@@ -164,6 +164,7 @@ export default function Room({
           data={data?.seeRoom?.messages}
           keyExtractor={(message) => '' + message.id}
           renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
         />
         <TextInput
           placeholder="Write a message..."
