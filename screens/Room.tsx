@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { useForm } from 'react-hook-form';
 import { KeyboardAvoidingView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -55,13 +56,24 @@ const Message = styled.Text`
   margin: 0px 8px;
 `;
 const TextInput = styled.TextInput`
-  margin-bottom: 50px;
-  margin-top: 25px;
-  width: 95%;
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 10px 20px;
   border-radius: 1000px;
   color: white;
+  width: 100%;
+`;
+
+const InputContainer = styled.View`
+  margin-bottom: 30px;
+  margin-top: 15px;
+  width: 95%;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const SendBtn = styled.TouchableOpacity`
+  position: absolute;
+  right: 20px;
 `;
 
 export default function Room({
@@ -124,7 +136,7 @@ export default function Room({
       update: updateSendMessage,
     }
   );
-  const { data, loading } = useQuery(ROOM_QUERY, {
+  const { data, loading, refetch } = useQuery(ROOM_QUERY, {
     variables: { id },
   });
   const onValid = ({ payload }) => {
@@ -155,26 +167,42 @@ export default function Room({
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: 'black' }}
       behavior="padding"
-      keyboardVerticalOffset={110}
+      keyboardVerticalOffset={130}
     >
       <ScreenLayout loading={loading}>
         <FlatList
           inverted
-          style={{ width: '100%', paddingVertical: 10 }}
+          style={{ width: '100%', marginVertical: 10 }}
           data={data?.seeRoom?.messages}
           keyExtractor={(message) => '' + message.id}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
         />
-        <TextInput
-          placeholder="Write a message..."
-          returnKeyLabel="Send Message"
-          returnKeyType="send"
-          placeholderTextColor="rgba(255, 255, 255, 0.5)"
-          value={watch('payload')}
-          onChangeText={(value) => setValue('payload', value)}
-          onSubmitEditing={handleSubmit(onValid)}
-        />
+        <InputContainer>
+          <TextInput
+            placeholder="Write a message..."
+            returnKeyLabel="Send Message"
+            returnKeyType="send"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            value={watch('payload')}
+            onChangeText={(value) => setValue('payload', value)}
+            onSubmitEditing={handleSubmit(onValid)}
+          />
+          <SendBtn
+            disabled={!Boolean(watch('payload'))}
+            onPress={handleSubmit(onValid)}
+          >
+            <Ionicons
+              name="paper-plane"
+              color={
+                !Boolean(watch('payload'))
+                  ? 'rgba(255, 255, 255, 0.5)'
+                  : 'white'
+              }
+              size={23}
+            />
+          </SendBtn>
+        </InputContainer>
       </ScreenLayout>
     </KeyboardAvoidingView>
   );
