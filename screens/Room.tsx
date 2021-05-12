@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,9 +8,10 @@ import { FlatList } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import ScreenLayout from '../components/ScreenLayout';
 import useMe from '../hooks/useMe';
+import { MESSAGE_FRAGMENT } from '../fragments';
 
 const SEND_MESSAGE_MUTATION = gql`
-  mutation sendMessage($payload: String!, $roomId: Int!, $userId: Int!) {
+  mutation sendMessage($payload: String!, $roomId: Int, $userId: Int) {
     sendMessage(payload: $payload, roomId: $roomId, userId: $userId) {
       success
       id
@@ -23,16 +24,20 @@ const ROOM_QUERY = gql`
     seeRoom(id: $id) {
       id
       messages {
-        id
-        payload
-        user {
-          username
-          avatar
-        }
-        read
+        ...MessageFragment
       }
     }
   }
+  ${MESSAGE_FRAGMENT}
+`;
+
+const ROOM_UPDATES = gql`
+  subscription roomUpdates($id: Int!) {
+    roomUpdates(id: $id) {
+      ...MessageFragment
+    }
+  }
+  ${MESSAGE_FRAGMENT}
 `;
 
 const MessageContainer = styled.View`
@@ -136,16 +141,23 @@ export default function Room({
       update: updateSendMessage,
     }
   );
-  const { data, loading, refetch } = useQuery(ROOM_QUERY, {
+  const { data, loading, subscribeToMore } = useQuery(ROOM_QUERY, {
     variables: { id },
   });
+  useEffect(() => {
+    if (data?.seeRoom) {
+      subscribeToMore({
+        document: ROOM_UPDATES,
+        variables: { id },
+      });
+    }
+  }, [data]);
   const onValid = ({ payload }) => {
     if (!sendingMessage) {
       sendMessageMutation({
         variables: {
           payload,
           roomId: id,
-          userId: talkingTo?.id,
         },
       });
     }
