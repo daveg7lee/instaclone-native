@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useSubscription } from '@apollo/client';
+import {
+  useApolloClient,
+  useMutation,
+  useQuery,
+  useSubscription,
+} from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -144,11 +149,44 @@ export default function Room({
   const { data, loading, subscribeToMore } = useQuery(ROOM_QUERY, {
     variables: { id },
   });
+  const client = useApolloClient();
+  const updateQuery = (prevQuery, options) => {
+    const {
+      subscriptionData: {
+        data: { roomUpdates: message },
+      },
+    } = options;
+    if (message.id) {
+      const messageFragment = client.cache.writeFragment({
+        fragment: gql`
+          fragment NewMessage on Message {
+            id
+            payload
+            user {
+              username
+              avatar
+            }
+            read
+          }
+        `,
+        data: message,
+      });
+      client.cache.modify({
+        id: `Room:${id}`,
+        fields: {
+          messages(prev) {
+            return [...prev, messageFragment];
+          },
+        },
+      });
+    }
+  };
   useEffect(() => {
     if (data?.seeRoom) {
       subscribeToMore({
         document: ROOM_UPDATES,
         variables: { id },
+        updateQuery,
       });
     }
   }, [data]);
