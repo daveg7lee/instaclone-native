@@ -1,9 +1,4 @@
-import {
-  useApolloClient,
-  useMutation,
-  useQuery,
-  useSubscription,
-} from '@apollo/client';
+import { useApolloClient, useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
