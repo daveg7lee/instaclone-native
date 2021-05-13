@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Text } from 'react-native';
+import Profile from '../components/Profile';
 import ScreenLayout from '../components/ScreenLayout';
 
-export default function Profile({ route: { params }, navigation }) {
+export default function ProfileScreen({ route: { params }, navigation }) {
   useEffect(() => {
     navigation.setOptions({
       title: params?.username,
@@ -10,9 +10,7 @@ export default function Profile({ route: { params }, navigation }) {
   }, [params?.username]);
   return (
     <ScreenLayout>
-      <Text style={{ color: 'white' }}>
-        Hello it's {params?.username}'s Profile!
-      </Text>
+      <Profile {...params} />
     </ScreenLayout>
   );
 }

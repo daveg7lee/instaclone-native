@@ -40,6 +40,14 @@ const ROOM_UPDATES = gql`
   ${MESSAGE_FRAGMENT}
 `;
 
+const READ_MESSAGE_MUTATION = gql`
+  mutation readMessage($id: Int!) {
+    readMessage(id: $id) {
+      success
+    }
+  }
+`;
+
 const MessageContainer = styled.View`
   padding: 10px;
   flex-direction: ${(props) => (props.outGoing ? 'row-reverse' : 'row')};
@@ -141,6 +149,7 @@ export default function Room({
       update: updateSendMessage,
     }
   );
+  const [readMessageMutation] = useMutation(READ_MESSAGE_MUTATION);
   const { data, loading, subscribeToMore } = useQuery(ROOM_QUERY, {
     variables: { id },
   });
@@ -189,6 +198,10 @@ export default function Room({
         variables: { id },
         updateQuery,
       });
+      for (const message in data?.seeRoom.messages) {
+        const messageId = data?.seeRoom.messages[message].id;
+        readMessageMutation({ variables: { id: messageId } });
+      }
     }
   }, [data]);
   const onValid = ({ payload }) => {

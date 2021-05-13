@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native';
 import routes from '../routes';
 import { gql, useMutation } from '@apollo/client';
+import { goToProfile } from '../utils';
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {
@@ -75,12 +76,6 @@ function Photo({ id, user, caption, file, isLiked, likes }) {
       setImageHeight(height / 4.5);
     });
   }, [file]);
-  const goToProfile = () => {
-    navigation.navigate(routes.profile, {
-      username: user.username,
-      id: user.id,
-    });
-  };
   const updateToggleLike = (cache, result) => {
     const {
       data: {
@@ -113,7 +108,7 @@ function Photo({ id, user, caption, file, isLiked, likes }) {
   });
   return (
     <Container>
-      <Header onPress={goToProfile}>
+      <Header onPress={() => goToProfile(user, navigation)}>
         <Avatar source={{ uri: user?.avatar }} />
         <Username>{user.username}</Username>
       </Header>
@@ -143,7 +138,7 @@ function Photo({ id, user, caption, file, isLiked, likes }) {
           <Likes>{likes === 1 ? '1 like' : `${likes} likes`}</Likes>
         </TouchableOpacity>
         <Caption>
-          <TouchableOpacity onPress={goToProfile}>
+          <TouchableOpacity onPress={() => goToProfile(user, navigation)}>
             <Username>{user.username}</Username>
           </TouchableOpacity>
           <CaptionText>{caption}</CaptionText>

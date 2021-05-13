@@ -1,7 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Image } from 'react-native';
-import Profile from '../screens/Profile';
 import Feed from '../screens/Feed';
 import Search from '../screens/Search';
 import Notifications from '../screens/Notifications';
@@ -9,6 +8,7 @@ import Me from '../screens/Me';
 import routes from '../routes';
 import Likes from '../screens/Likes';
 import PhotoScreen from '../screens/PhotoScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -51,7 +51,7 @@ export default function SharedStackNav({ screenName }) {
       {screenName === routes.me ? (
         <Screen name={'Stack' + screenName} component={Me} />
       ) : null}
-      <Screen name={routes.profile} component={Profile} />
+      <Screen name={routes.profile} component={ProfileScreen} />
       <Screen name={routes.photo} component={PhotoScreen} />
       <Screen name={routes.likes} component={Likes} />
     </Navigator>
