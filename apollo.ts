@@ -27,7 +27,10 @@ export const logUserOut = async () => {
 };
 
 const uploadHttpLink = createUploadLink({
-  uri: 'http://localhost:4000/graphql',
+  uri:
+    process.env.NODE_ENV === 'production'
+      ? 'https://instaclone-backend-dics.herokuapp.com/graphql'
+      : 'http://localhost:4000/graphql',
 });
 
 const wsLink = new WebSocketLink({
@@ -59,6 +62,9 @@ const onErrorLink = onError(({ graphQLErrors, networkError }) => {
 
 export const cache = new InMemoryCache({
   typePolicies: {
+    User: {
+      keyFields: (obj) => `User:${obj.username}`,
+    },
     Query: {
       fields: {
         seeFeed: offsetLimitPagination(),

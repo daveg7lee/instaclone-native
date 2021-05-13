@@ -1,26 +1,23 @@
 import { gql, useLazyQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  ActivityIndicator,
-  Image,
-  Text,
-  TextInput,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, useWindowDimensions } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import DismissKeyboard from '../components/DismissKeyboard';
-import ScreenLayout from '../components/ScreenLayout';
 import routes from '../routes';
 import { RouteProps } from '../types';
+
+const Container = styled.View`
+  background-color: black;
+  flex: 1;
+`;
 
 const Input = styled.TextInput`
   background-color: rgba(255, 255, 255, 1);
   color: black;
   width: ${(props) => props.width / 1.5}px;
-  padding: 5px 10px;
+  padding: 6px 10px;
   border-radius: 7px;
 `;
 
@@ -85,7 +82,7 @@ export default function Search({ navigation }: RouteProps) {
   );
   return (
     <DismissKeyboard>
-      <ScreenLayout>
+      <Container>
         {loading ? (
           <MessageContainer>
             <ActivityIndicator size="large" />
@@ -110,7 +107,7 @@ export default function Search({ navigation }: RouteProps) {
             renderItem={renderItem}
           />
         )}
-      </ScreenLayout>
+      </Container>
     </DismissKeyboard>
   );
 }
