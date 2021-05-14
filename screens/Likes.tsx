@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import React from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { USER_FRAGMENT } from '../fragments';
 import ScreenLayout from '../components/ScreenLayout';
 import { FlatList } from 'react-native-gesture-handler';

@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native';
 import routes from '../routes';
 import { gql, useMutation } from '@apollo/client';
-import { goToProfile } from '../utils';
+import { goToProfile } from '../shared/shared.utils';
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {

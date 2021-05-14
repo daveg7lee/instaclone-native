@@ -1,23 +1,37 @@
-import { gql, useMutation } from '@apollo/client';
-import React from 'react';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { useNavigation } from '@react-navigation/core';
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import { colors } from '../colors';
+import { USER_FRAGMENT } from '../fragments';
 import useMe from '../hooks/useMe';
+import routes from '../routes';
+import {
+  FOLLOW_USER_MUTATION,
+  SEE_ROOMS_QUERY,
+  UNFOLLOW_USER_MUTATION,
+} from '../shared/shared.query';
+import {
+  followUserUpdate,
+  unfollowUserUpdate,
+  toggleFollow,
+} from '../shared/shared.utils';
+import ScreenLayout from './ScreenLayout';
 
-const UNFOLLOW_USER_MUTATION = gql`
-  mutation unfollowUser($username: String!) {
-    unfollowUser(username: $username) {
-      success
-      error
+const SEE_PROFILE_QUERY = gql`
+  query seeProfile($username: String!) {
+    seeProfile(username: $username) {
+      ...UserFragment
     }
   }
+  ${USER_FRAGMENT}
 `;
 
-const FOLLOW_USER_MUTATION = gql`
-  mutation followUser($username: String!) {
-    followUser(username: $username) {
+const CREATE_ROOM_MUTATION = gql`
+  mutation createRoom($userId: Int!) {
+    createRoom(userId: $userId) {
       success
-      error
+      id
     }
   }
 `;
@@ -88,125 +102,94 @@ const MessageBtnText = styled(FollowBtnText)`
   color: black;
 `;
 
-function Profile({
-  avatar,
-  totalFollowers,
-  totalFollowing,
-  totalPosts,
-  username,
-  isMe,
-  isFollowing,
-  bio,
-}) {
+function Profile({ username, id }) {
   const { me } = useMe();
-  const unfollowUserUpdate = (cache: any, result: any) => {
-    const {
-      data: {
-        unfollowUser: { success },
-      },
-    } = result;
-    if (success) {
-      cache.modify({
-        id: `User:${username}`,
-        fields: {
-          isFollowing(prev) {
-            return false;
-          },
-          totalFollowers(prev: number) {
-            return prev - 1;
-          },
-        },
-      });
-      cache.modify({
-        id: `User:${me?.username}`,
-        fields: {
-          totalFollowers(prev: number) {
-            return prev - 1;
-          },
-        },
-      });
-    }
-  };
-  const followUserUpdate = (cache: any, result: any) => {
-    const {
-      data: {
-        followUser: { success },
-      },
-    } = result;
-    if (!success) {
-      return;
-    }
-    cache.modify({
-      id: `User:${username}`,
-      fields: {
-        isFollowing() {
-          return true;
-        },
-        totalFollowers(prev: number) {
-          return prev + 1;
-        },
-      },
-    });
-    cache.modify({
-      id: `User:${me?.username}`,
-      fields: {
-        totalFollowers(prev: number) {
-          return prev + 1;
-        },
-      },
-    });
-  };
+  const navigation: any = useNavigation();
+  const [createRoomMutation] = useMutation(CREATE_ROOM_MUTATION);
+  const { data, loading } = useQuery(SEE_PROFILE_QUERY, {
+    variables: { username },
+  });
+  const { data: RoomsData } = useQuery(SEE_ROOMS_QUERY);
   const [unfollowUserMutation] = useMutation(UNFOLLOW_USER_MUTATION, {
     variables: { username },
-    update: unfollowUserUpdate,
+    update: (cache, result) => unfollowUserUpdate(cache, result, username, me),
   });
   const [followUserMutation] = useMutation(FOLLOW_USER_MUTATION, {
     variables: { username },
-    update: followUserUpdate,
+    update: (cache, result) => followUserUpdate(cache, result, username, me),
   });
-  const toggleFollow = async () => {
-    if (isFollowing) {
-      await unfollowUserMutation();
-    } else {
-      await followUserMutation();
+  const onPressMessage = async () => {
+    const roomExist = RoomsData?.seeRooms?.map((room) => {
+      if (room?.users.find((user) => user.id === id)) {
+        return room.id;
+      }
+    });
+    if (!roomExist) {
+      const {
+        data: { id: createdId },
+      } = await createRoomMutation({ variables: { userId: id } });
+      navigation.navigate('Messages', {
+        screen: routes.room,
+        params: {
+          id: createdId,
+          talkingTo: { ...data?.seeProfile },
+        },
+      });
     }
+    navigation.navigate('Messages', {
+      screen: routes.room,
+      params: {
+        id: roomExist,
+        talkingTo: { ...data?.seeProfile },
+      },
+    });
   };
   return (
-    <Container>
-      <Top>
-        <Column>
-          <Avatar source={{ uri: avatar }} />
-        </Column>
-        <Column>
-          <BoldText size={20}>{totalPosts}</BoldText>
-          <InfoText>Posts</InfoText>
-        </Column>
-        <Column>
-          <BoldText size={20}>{totalFollowers}</BoldText>
-          <InfoText>Followers</InfoText>
-        </Column>
-        <Column>
-          <BoldText size={20}>{totalFollowing}</BoldText>
-          <InfoText>Following</InfoText>
-        </Column>
-      </Top>
-      <Bottom>
-        <BoldText size={18}>{username}</BoldText>
-        <InfoText size={15}>{bio}</InfoText>
-        {!isMe && (
-          <BtnsContainer>
-            <FollowBtn onPress={toggleFollow}>
-              <FollowBtnText>
-                {isFollowing ? 'UnFollow' : 'Follow'}
-              </FollowBtnText>
-            </FollowBtn>
-            <MessageBtn>
-              <MessageBtnText>Message</MessageBtnText>
-            </MessageBtn>
-          </BtnsContainer>
-        )}
-      </Bottom>
-    </Container>
+    <ScreenLayout loading={loading}>
+      <Container>
+        <Top>
+          <Column>
+            <Avatar source={{ uri: data?.seeProfile?.avatar }} />
+          </Column>
+          <Column>
+            <BoldText size={20}>{data?.seeProfile?.totalPosts}</BoldText>
+            <InfoText>Posts</InfoText>
+          </Column>
+          <Column>
+            <BoldText size={20}>{data?.seeProfile?.totalFollowers}</BoldText>
+            <InfoText>Followers</InfoText>
+          </Column>
+          <Column>
+            <BoldText size={20}>{data?.seeProfile?.totalFollowing}</BoldText>
+            <InfoText>Following</InfoText>
+          </Column>
+        </Top>
+        <Bottom>
+          <BoldText size={18}>{username}</BoldText>
+          <InfoText size={15}>{data?.seeProfile?.bio}</InfoText>
+          {!data?.seeProfile?.isMe && (
+            <BtnsContainer>
+              <FollowBtn
+                onPress={() =>
+                  toggleFollow(
+                    data?.seeProfile?.isFollowing,
+                    unfollowUserMutation,
+                    followUserMutation
+                  )
+                }
+              >
+                <FollowBtnText>
+                  {data?.seeProfile?.isFollowing ? 'UnFollow' : 'Follow'}
+                </FollowBtnText>
+              </FollowBtn>
+              <MessageBtn onPress={onPressMessage}>
+                <MessageBtnText>Message</MessageBtnText>
+              </MessageBtn>
+            </BtnsContainer>
+          )}
+        </Bottom>
+      </Container>
+    </ScreenLayout>
   );
 }
 
