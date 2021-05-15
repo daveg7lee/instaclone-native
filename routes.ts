@@ -15,4 +15,5 @@ export default {
   selectPhoto: 'Select',
   rooms: 'Rooms',
   room: 'Room',
+  editProfile: 'Edit Profile',
 };

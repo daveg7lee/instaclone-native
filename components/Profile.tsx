@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/core';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
 import { colors } from '../colors';
 import { USER_FRAGMENT } from '../fragments';
@@ -80,25 +80,25 @@ const BtnsContainer = styled.View`
   justify-content: space-between;
 `;
 
-const FollowBtn = styled.TouchableOpacity`
+const BlueBtn = styled.TouchableOpacity`
   background-color: ${colors.blue};
   width: 49%;
   border-radius: 4px;
   padding: 8px 10px;
 `;
 
-const FollowBtnText = styled.Text`
+const BlueBtnText = styled.Text`
   color: white;
   font-weight: 600;
   font-size: 15;
   text-align: center;
 `;
 
-const MessageBtn = styled(FollowBtn)`
+const MessageBtn = styled(BlueBtn)`
   background-color: white;
 `;
 
-const MessageBtnText = styled(FollowBtnText)`
+const MessageBtnText = styled(BlueBtnText)`
   color: black;
 `;
 
@@ -150,7 +150,6 @@ function Profile({ username, id }) {
         id: `User:${me?.id}`,
         fields: {
           rooms(prev) {
-            console.log(prev);
             return [roomFragment, ...prev];
           },
         },
@@ -159,7 +158,6 @@ function Profile({ username, id }) {
         id: `User:${data?.seeProfile?.id}`,
         fields: {
           rooms(prev) {
-            console.log(prev);
             return [roomFragment, ...prev];
           },
         },
@@ -231,9 +229,9 @@ function Profile({ username, id }) {
         <Bottom>
           <BoldText size={18}>{username}</BoldText>
           <InfoText size={15}>{data?.seeProfile?.bio}</InfoText>
-          {!data?.seeProfile?.isMe && (
+          {!data?.seeProfile?.isMe ? (
             <BtnsContainer>
-              <FollowBtn
+              <BlueBtn
                 onPress={() =>
                   toggleFollow(
                     data?.seeProfile?.isFollowing,
@@ -242,13 +240,22 @@ function Profile({ username, id }) {
                   )
                 }
               >
-                <FollowBtnText>
+                <BlueBtnText>
                   {data?.seeProfile?.isFollowing ? 'UnFollow' : 'Follow'}
-                </FollowBtnText>
-              </FollowBtn>
+                </BlueBtnText>
+              </BlueBtn>
               <MessageBtn onPress={onPressMessage}>
                 <MessageBtnText>Message</MessageBtnText>
               </MessageBtn>
+            </BtnsContainer>
+          ) : (
+            <BtnsContainer>
+              <BlueBtn
+                style={{ width: '100%', marginTop: 10 }}
+                onPress={() => navigation.navigate(routes.editProfile)}
+              >
+                <BlueBtnText>Edit Profile</BlueBtnText>
+              </BlueBtn>
             </BtnsContainer>
           )}
         </Bottom>

@@ -9,6 +9,7 @@ import routes from '../routes';
 import Likes from '../screens/Likes';
 import PhotoScreen from '../screens/PhotoScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import EditProfile from '../screens/EditProfile';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -54,6 +55,7 @@ export default function SharedStackNav({ screenName }) {
       <Screen name={routes.profile} component={ProfileScreen} />
       <Screen name={routes.photo} component={PhotoScreen} />
       <Screen name={routes.likes} component={Likes} />
+      <Screen name={routes.editProfile} component={EditProfile} />
     </Navigator>
   );
 }

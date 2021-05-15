@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Text } from 'react-native';
+import Profile from '../components/Profile';
 import ScreenLayout from '../components/ScreenLayout';
 import useMe from '../hooks/useMe';
 import { RouteProps, UserType } from '../types';
@@ -17,7 +18,7 @@ export default function Me({ navigation }: RouteProps) {
   }, [me?.username]);
   return (
     <ScreenLayout>
-      <Text style={{ color: 'white' }}>{me?.username}</Text>
+      <Profile {...me} />
     </ScreenLayout>
   );
 }
