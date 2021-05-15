@@ -104,10 +104,70 @@ const MessageBtnText = styled(FollowBtnText)`
 
 function Profile({ username, id }) {
   const { me } = useMe();
-  const navigation: any = useNavigation();
-  const [createRoomMutation] = useMutation(CREATE_ROOM_MUTATION);
   const { data, loading } = useQuery(SEE_PROFILE_QUERY, {
     variables: { username },
+  });
+  const navigation: any = useNavigation();
+  const createRoomUpdate = (cache, result) => {
+    const {
+      data: {
+        createRoom: { success, id: roomId },
+      },
+    } = result;
+    if (success && me) {
+      const roomObj = {
+        id: roomId,
+        unreadTotal: 0,
+        users: [
+          {
+            id: me?.id,
+            avatar: me?.avatar,
+            username: me?.username,
+          },
+          {
+            id: data?.seeProfile?.id,
+            avatar: data?.seeProfile?.avatar,
+            username: data?.seeProfile?.username,
+          },
+        ],
+        __typename: 'Room',
+      };
+      const roomFragment = cache.writeFragment({
+        fragment: gql`
+          fragment roomFragment on Room {
+            id
+            unreadTotal
+            users {
+              id
+              avatar
+              username
+            }
+          }
+        `,
+        data: roomObj,
+      });
+      cache.modify({
+        id: `User:${me?.id}`,
+        fields: {
+          rooms(prev) {
+            console.log(prev);
+            return [roomFragment, ...prev];
+          },
+        },
+      });
+      cache.modify({
+        id: `User:${data?.seeProfile?.id}`,
+        fields: {
+          rooms(prev) {
+            console.log(prev);
+            return [roomFragment, ...prev];
+          },
+        },
+      });
+    }
+  };
+  const [createRoomMutation] = useMutation(CREATE_ROOM_MUTATION, {
+    update: createRoomUpdate,
   });
   const { data: RoomsData } = useQuery(SEE_ROOMS_QUERY);
   const [unfollowUserMutation] = useMutation(UNFOLLOW_USER_MUTATION, {
@@ -119,14 +179,17 @@ function Profile({ username, id }) {
     update: (cache, result) => followUserUpdate(cache, result, username, me),
   });
   const onPressMessage = async () => {
-    const roomExist = RoomsData?.seeRooms?.map((room) => {
+    let roomId;
+    await RoomsData?.seeRooms?.map((room) => {
       if (room?.users.find((user) => user.id === id)) {
-        return room.id;
+        roomId = room.id;
       }
     });
-    if (!roomExist) {
+    if (!roomId) {
       const {
-        data: { id: createdId },
+        data: {
+          createRoom: { id: createdId },
+        },
       } = await createRoomMutation({ variables: { userId: id } });
       navigation.navigate('Messages', {
         screen: routes.room,
@@ -135,14 +198,15 @@ function Profile({ username, id }) {
           talkingTo: { ...data?.seeProfile },
         },
       });
+    } else {
+      navigation.navigate('Messages', {
+        screen: routes.room,
+        params: {
+          id: roomId,
+          talkingTo: { ...data?.seeProfile },
+        },
+      });
     }
-    navigation.navigate('Messages', {
-      screen: routes.room,
-      params: {
-        id: roomExist,
-        talkingTo: { ...data?.seeProfile },
-      },
-    });
   };
   return (
     <ScreenLayout loading={loading}>
